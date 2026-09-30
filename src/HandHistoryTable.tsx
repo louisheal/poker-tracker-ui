@@ -1,5 +1,6 @@
 import {
   Box,
+  CircularProgress,
   Paper,
   Table,
   TableBody,
@@ -12,9 +13,13 @@ import { HandHistoryRow } from "./HandHistoryRow";
 
 export interface HandHistoryTableProps {
   handIds: readonly string[];
+  isLoading?: boolean;
 }
 
-export function HandHistoryTable({ handIds }: HandHistoryTableProps) {
+export function HandHistoryTable({
+  handIds,
+  isLoading = false,
+}: HandHistoryTableProps) {
   return (
     <Paper
       component="section"
@@ -32,7 +37,11 @@ export function HandHistoryTable({ handIds }: HandHistoryTableProps) {
         borderRadius: 2,
       }}
     >
-      {handIds.length === 0 ? (
+      {isLoading ? (
+        <Box role="status" sx={{ px: 3, py: 5, textAlign: "center" }}>
+          <CircularProgress aria-label="Loading hand histories" size={24} />
+        </Box>
+      ) : handIds.length === 0 ? (
         <Box role="status" sx={{ px: 3, py: 5, textAlign: "center" }}>
           <Typography color="text.secondary" variant="body2">
             no hands found
