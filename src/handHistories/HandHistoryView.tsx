@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, Box, Snackbar } from "@mui/material";
-import { getHandHistories } from "./api";
-import { Header } from "./Header";
+import { getHandHistories } from "../api";
+import { Header } from "../Header";
 import { HandHistoryTable } from "./HandHistoryTable";
-import { UploadHandHistoriesButton } from "./UploadHandHistoriesButton";
+import { UploadButton } from "./UploadButton";
 
 export interface HandHistoryViewProps {
   handIds?: readonly string[];
@@ -60,7 +60,7 @@ export function HandHistoryView({ handIds = [] }: HandHistoryViewProps) {
       }}
     >
       <Header>
-        <UploadHandHistoriesButton onUploaded={handleUploaded} />
+        <UploadButton onUploaded={handleUploaded} />
       </Header>
       <Box
         component="main"

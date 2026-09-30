@@ -1,15 +1,13 @@
 import { FileUpload } from "@mui/icons-material";
 import { Alert, Button, CircularProgress, Snackbar } from "@mui/material";
 import { useState } from "react";
-import { getHandHistories, uploadHandHistories } from "./api";
+import { getHandHistories, uploadHandHistories } from "../api";
 
 interface UploadHandHistoriesButtonProps {
   onUploaded: (handIds: string[]) => void;
 }
 
-export function UploadHandHistoriesButton({
-  onUploaded,
-}: UploadHandHistoriesButtonProps) {
+export function UploadButton({ onUploaded }: UploadHandHistoriesButtonProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

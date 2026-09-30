@@ -1,5 +1,5 @@
 import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import { HandHistoryView } from "./HandHistoryView";
+import { HandHistoryView } from "./handHistories/HandHistoryView";
 import { NavigationPanel } from "./NavigationPanel";
 import { theme } from "./theme";
 
