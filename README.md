@@ -7,31 +7,28 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## React Compiler
+## Poker Tracker UI
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The React client for Poker Tracker.
 
-## Expanding the ESLint configuration
+## Development
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```sh
+npm install
+npm run dev
+```
 
-```js
-export default defineConfig([
-  # Poker Tracker UI
+By default, API requests use relative `/api` URLs. Vite proxies them to `http://localhost:5076` during local development, and the production ingress routes them to the API service.
 
-  The React client for Poker Tracker.
+To point the local UI at another API, copy `.env.example` to `.env.local` and set `VITE_API_BASE_URL` to the API origin. For example:
 
-  ## Development
+```env
+VITE_API_BASE_URL=https://poker-tracker.louisheal.com
+```
 
-  ```sh
-  npm install
-  npm run dev
-  ```
+## Checks
 
-  ## Checks
-
-  ```sh
-  npm run lint
-  npm run build
-  ```
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+```sh
+npm run lint
+npm run build
+```
