@@ -7,7 +7,9 @@ interface UploadHandHistoriesButtonProps {
   onUploaded: (handIds: string[]) => void;
 }
 
-export function UploadButton({ onUploaded }: UploadHandHistoriesButtonProps) {
+export const UploadButton = ({
+  onUploaded,
+}: UploadHandHistoriesButtonProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -103,4 +105,4 @@ export function UploadButton({ onUploaded }: UploadHandHistoriesButtonProps) {
       </Snackbar>
     </>
   );
-}
+};

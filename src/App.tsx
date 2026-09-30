@@ -3,7 +3,7 @@ import { HandHistoryView } from "./handHistories/HandHistoryView";
 import { NavigationPanel } from "./NavigationPanel";
 import { theme } from "./theme";
 
-function App() {
+const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -15,6 +15,6 @@ function App() {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

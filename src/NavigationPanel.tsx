@@ -11,7 +11,7 @@ import {
 
 const drawerWidth = { xs: 56, sm: 224 };
 
-export function NavigationPanel() {
+export const NavigationPanel = () => {
   return (
     <Drawer
       variant="permanent"
@@ -63,4 +63,4 @@ export function NavigationPanel() {
       </Box>
     </Drawer>
   );
-}
+};

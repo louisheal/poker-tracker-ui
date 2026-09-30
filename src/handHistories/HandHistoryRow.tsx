@@ -4,10 +4,10 @@ export interface HandHistoryRowProps {
   handId: string;
 }
 
-export function HandHistoryRow({ handId }: HandHistoryRowProps) {
+export const HandHistoryRow = ({ handId }: HandHistoryRowProps) => {
   return (
     <TableRow hover>
       <TableCell>{handId}</TableCell>
     </TableRow>
   );
-}
+};

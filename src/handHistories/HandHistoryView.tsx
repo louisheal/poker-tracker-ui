@@ -9,7 +9,7 @@ export interface HandHistoryViewProps {
   handIds?: readonly string[];
 }
 
-export function HandHistoryView({ handIds = [] }: HandHistoryViewProps) {
+export const HandHistoryView = ({ handIds = [] }: HandHistoryViewProps) => {
   const [uploadedHandIds, setUploadedHandIds] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -99,4 +99,4 @@ export function HandHistoryView({ handIds = [] }: HandHistoryViewProps) {
       </Snackbar>
     </Box>
   );
-}
+};

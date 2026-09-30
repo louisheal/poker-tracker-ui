@@ -5,7 +5,7 @@ interface HeaderProps {
   children?: ReactNode;
 }
 
-export function Header({ children }: HeaderProps) {
+export const Header = ({ children }: HeaderProps) => {
   return (
     <AppBar
       component="header"
@@ -25,4 +25,4 @@ export function Header({ children }: HeaderProps) {
       </Toolbar>
     </AppBar>
   );
-}
+};

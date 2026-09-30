@@ -16,10 +16,10 @@ export interface HandHistoryTableProps {
   isLoading?: boolean;
 }
 
-export function HandHistoryTable({
+export const HandHistoryTable = ({
   handIds,
   isLoading = false,
-}: HandHistoryTableProps) {
+}: HandHistoryTableProps) => {
   return (
     <Paper
       component="section"
@@ -63,4 +63,4 @@ export function HandHistoryTable({
       )}
     </Paper>
   );
-}
+};
