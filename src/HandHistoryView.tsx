@@ -1,12 +1,16 @@
+import { useState } from "react";
 import { Box } from "@mui/material";
 import { Header } from "./Header";
 import { HandHistoryTable } from "./HandHistoryTable";
+import { UploadHandHistoriesButton } from "./UploadHandHistoriesButton";
 
 export interface HandHistoryViewProps {
   handIds?: readonly string[];
 }
 
 export function HandHistoryView({ handIds = [] }: HandHistoryViewProps) {
+  const [uploadedHandIds, setUploadedHandIds] = useState<string[] | null>(null);
+
   return (
     <Box
       sx={{
@@ -15,18 +19,23 @@ export function HandHistoryView({ handIds = [] }: HandHistoryViewProps) {
         color: "text.primary",
       }}
     >
-      <Header />
+      <Header>
+        <UploadHandHistoriesButton onUploaded={setUploadedHandIds} />
+      </Header>
       <Box
         component="main"
         sx={{
-          display: "grid",
+          display: "flex",
           minHeight: "calc(100vh - 65px)",
-          placeItems: "center",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 2,
           px: 2.5,
           py: 4,
         }}
       >
-        <HandHistoryTable handIds={handIds} />
+        <HandHistoryTable handIds={uploadedHandIds ?? handIds} />
       </Box>
     </Box>
   );
