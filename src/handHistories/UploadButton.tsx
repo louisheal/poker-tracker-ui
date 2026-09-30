@@ -3,13 +3,11 @@ import { Alert, Button, CircularProgress, Snackbar } from "@mui/material";
 import { useState } from "react";
 import { getHandHistories, uploadHandHistories } from "../api";
 
-interface UploadHandHistoriesButtonProps {
+type Props = {
   onUploaded: (handIds: string[]) => void;
-}
+};
 
-export const UploadButton = ({
-  onUploaded,
-}: UploadHandHistoriesButtonProps) => {
+export const UploadButton = (props: Props) => {
   const [isUploading, setIsUploading] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -29,7 +27,7 @@ export const UploadButton = ({
 
       try {
         const handHistories = await getHandHistories();
-        onUploaded(handHistories.map(({ handId }) => handId));
+        props.onUploaded(handHistories.map(({ handId }) => handId));
       } catch {
         setErrorMessage(
           "Files uploaded, but hand histories could not be refreshed.",

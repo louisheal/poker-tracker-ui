@@ -1,13 +1,13 @@
 import { TableCell, TableRow } from "@mui/material";
 
-export interface HandHistoryRowProps {
+type Props = {
   handId: string;
-}
+};
 
-export const HandHistoryRow = ({ handId }: HandHistoryRowProps) => {
+export const HandHistoryRow = (props: Props) => {
   return (
     <TableRow hover>
-      <TableCell>{handId}</TableCell>
+      <TableCell>{props.handId}</TableCell>
     </TableRow>
   );
 };

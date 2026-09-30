@@ -5,11 +5,11 @@ import { Header } from "../Header";
 import { HandHistoryTable } from "./HandHistoryTable";
 import { UploadButton } from "./UploadButton";
 
-export interface HandHistoryViewProps {
+type Props = {
   handIds?: readonly string[];
-}
+};
 
-export const HandHistoryView = ({ handIds = [] }: HandHistoryViewProps) => {
+export const HandHistoryView = (props: Props) => {
   const [uploadedHandIds, setUploadedHandIds] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -76,9 +76,11 @@ export const HandHistoryView = ({ handIds = [] }: HandHistoryViewProps) => {
         }}
       >
         <HandHistoryTable
-          handIds={uploadedHandIds ?? handIds}
+          handIds={uploadedHandIds ?? props.handIds ?? []}
           isLoading={
-            isLoading && uploadedHandIds === null && handIds.length === 0
+            isLoading &&
+            uploadedHandIds === null &&
+            (props.handIds?.length ?? 0) === 0
           }
         />
       </Box>

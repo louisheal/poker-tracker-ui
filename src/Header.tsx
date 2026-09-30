@@ -1,11 +1,11 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import type { ReactNode } from "react";
 
-interface HeaderProps {
+type Props = {
   children?: ReactNode;
-}
+};
 
-export const Header = ({ children }: HeaderProps) => {
+export const Header = (props: Props) => {
   return (
     <AppBar
       component="header"
@@ -21,7 +21,7 @@ export const Header = ({ children }: HeaderProps) => {
         >
           Poker Tracker
         </Typography>
-        {children}
+        {props.children}
       </Toolbar>
     </AppBar>
   );

@@ -11,15 +11,12 @@ import {
 } from "@mui/material";
 import { HandHistoryRow } from "./HandHistoryRow";
 
-export interface HandHistoryTableProps {
+type Props = {
   handIds: readonly string[];
   isLoading?: boolean;
-}
+};
 
-export const HandHistoryTable = ({
-  handIds,
-  isLoading = false,
-}: HandHistoryTableProps) => {
+export const HandHistoryTable = (props: Props) => {
   return (
     <Paper
       component="section"
@@ -37,11 +34,11 @@ export const HandHistoryTable = ({
         borderRadius: 2,
       }}
     >
-      {isLoading ? (
+      {props.isLoading ? (
         <Box role="status" sx={{ px: 3, py: 5, textAlign: "center" }}>
           <CircularProgress aria-label="Loading hand histories" size={24} />
         </Box>
-      ) : handIds.length === 0 ? (
+      ) : props.handIds.length === 0 ? (
         <Box role="status" sx={{ px: 3, py: 5, textAlign: "center" }}>
           <Typography color="text.secondary" variant="body2">
             no hands found
@@ -55,7 +52,7 @@ export const HandHistoryTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {handIds.map((handId) => (
+            {props.handIds.map((handId) => (
               <HandHistoryRow key={handId} handId={handId} />
             ))}
           </TableBody>
