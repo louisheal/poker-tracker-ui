@@ -1,8 +1,10 @@
+import type { RangeActions } from "./model";
+
 export interface HandHistoryDto {
   handId: string;
 }
 
-export interface HandHistoryImportSummary {
+export interface HandImportummary {
   filesReceived: number;
   handsSaved: number;
   duplicateHands: number;
@@ -11,16 +13,12 @@ export interface HandHistoryImportSummary {
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
-export const getHandHistories = async (
-  signal?: AbortSignal,
-): Promise<HandHistoryDto[]> => {
+export const getHandHistories = async (signal?: AbortSignal): Promise<HandHistoryDto[]> => {
   const response = await fetch(`${apiBaseUrl}/api/handhistories`, { signal });
   return parseResponse<HandHistoryDto[]>(response);
 };
 
-export const uploadHandHistories = async (
-  files: readonly File[],
-): Promise<HandHistoryImportSummary> => {
+export const uploadHandHistories = async (files: readonly File[]): Promise<HandImportummary> => {
   const formData = new FormData();
   for (const file of files) {
     formData.append("files", file, file.name);
@@ -31,7 +29,13 @@ export const uploadHandHistories = async (
     body: formData,
   });
 
-  return parseResponse<HandHistoryImportSummary>(response);
+  return parseResponse<HandImportummary>(response);
+};
+
+export const getObservedRange = async (spotKey: string, signal?: AbortSignal): Promise<RangeActions> => {
+  const query = new URLSearchParams({ spotKey });
+  const response = await fetch(`${apiBaseUrl}/api/preflopspots/range?${query}`, { signal });
+  return parseResponse<RangeActions>(response);
 };
 
 const parseResponse = async <T>(response: Response): Promise<T> => {

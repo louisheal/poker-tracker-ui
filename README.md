@@ -1,15 +1,11 @@
-# React + TypeScript + Vite
+# Poker Tracker UI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The user interface for Poker Tracker.
 
-Currently, two official plugins are available:
+## Glossary
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## Poker Tracker UI
-
-The React client for Poker Tracker.
+- **Target range:** The actions and frequencies you intend to use for a spot.
+- **Actual range:** The actions and frequencies recorded in your imported hands for that spot.
 
 ## Development
 

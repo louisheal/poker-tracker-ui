@@ -1,7 +1,17 @@
 import { FileUpload } from "@mui/icons-material";
 import { Alert, Button, CircularProgress, Snackbar } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { useState } from "react";
 import { getHandHistories, uploadHandHistories } from "../api";
+
+const uploadSnackbarSx = {
+  top: "80px !important",
+  width: "min(calc(100vw - 32px), 560px)",
+} satisfies SxProps<Theme>;
+
+const snackbarAlertSx = {
+  width: "100%",
+} satisfies SxProps<Theme>;
 
 type Props = {
   onUploaded: (handIds: string[]) => void;
@@ -29,14 +39,10 @@ export const UploadButton = (props: Props) => {
         const handHistories = await getHandHistories();
         props.onUploaded(handHistories.map(({ handId }) => handId));
       } catch {
-        setErrorMessage(
-          "Files uploaded, but hand histories could not be refreshed.",
-        );
+        setErrorMessage("Files uploaded, but hand histories could not be refreshed.");
       }
     } catch (error) {
-      setErrorMessage(
-        error instanceof Error ? error.message : "File upload failed.",
-      );
+      setErrorMessage(error instanceof Error ? error.message : "File upload failed.");
     } finally {
       setIsUploading(false);
     }
@@ -48,13 +54,7 @@ export const UploadButton = (props: Props) => {
         component="label"
         variant="contained"
         disabled={isUploading}
-        startIcon={
-          isUploading ? (
-            <CircularProgress color="inherit" size={18} />
-          ) : (
-            <FileUpload />
-          )
-        }
+        startIcon={isUploading ? <CircularProgress color="inherit" size={18} /> : <FileUpload />}
       >
         {isUploading ? "Processing..." : "Upload files"}
         <input
@@ -75,14 +75,10 @@ export const UploadButton = (props: Props) => {
         open={successMessage !== null}
         autoHideDuration={6000}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        sx={{ top: "80px !important", width: "min(calc(100vw - 32px), 560px)" }}
+        sx={uploadSnackbarSx}
         onClose={() => setSuccessMessage(null)}
       >
-        <Alert
-          onClose={() => setSuccessMessage(null)}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={snackbarAlertSx}>
           {successMessage}
         </Alert>
       </Snackbar>
@@ -92,12 +88,7 @@ export const UploadButton = (props: Props) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         onClose={() => setErrorMessage(null)}
       >
-        <Alert
-          onClose={() => setErrorMessage(null)}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={() => setErrorMessage(null)} severity="error" variant="filled" sx={snackbarAlertSx}>
           {errorMessage}
         </Alert>
       </Snackbar>

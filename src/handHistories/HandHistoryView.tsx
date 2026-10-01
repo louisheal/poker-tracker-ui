@@ -1,15 +1,29 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, Box, Snackbar } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { getHandHistories } from "../api";
 import { Header } from "../Header";
 import { HandHistoryTable } from "./HandHistoryTable";
 import { UploadButton } from "./UploadButton";
 
-type Props = {
-  handIds?: readonly string[];
-};
+const handHistoryViewSx = {
+  minHeight: "100vh",
+  bgcolor: "background.default",
+  color: "text.primary",
+} satisfies SxProps<Theme>;
 
-export const HandHistoryView = (props: Props) => {
+const handHistoryContentSx = {
+  display: "flex",
+  minHeight: "calc(100vh - 65px)",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 2,
+  px: 2.5,
+  py: 4,
+} satisfies SxProps<Theme>;
+
+export const HandHistoryView = () => {
   const [uploadedHandIds, setUploadedHandIds] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -26,15 +40,8 @@ export const HandHistoryView = (props: Props) => {
         }
       })
       .catch((error: unknown) => {
-        if (
-          !controller.signal.aborted &&
-          requestVersion === handHistoryRequestVersion.current
-        ) {
-          setErrorMessage(
-            error instanceof Error
-              ? error.message
-              : "Could not load hand histories.",
-          );
+        if (!controller.signal.aborted && requestVersion === handHistoryRequestVersion.current) {
+          setErrorMessage(error instanceof Error ? error.message : "Could not load hand histories.");
         }
       })
       .finally(() => {
@@ -52,37 +59,12 @@ export const HandHistoryView = (props: Props) => {
   };
 
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        bgcolor: "background.default",
-        color: "text.primary",
-      }}
-    >
+    <Box sx={handHistoryViewSx}>
       <Header>
         <UploadButton onUploaded={handleUploaded} />
       </Header>
-      <Box
-        component="main"
-        sx={{
-          display: "flex",
-          minHeight: "calc(100vh - 65px)",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 2,
-          px: 2.5,
-          py: 4,
-        }}
-      >
-        <HandHistoryTable
-          handIds={uploadedHandIds ?? props.handIds ?? []}
-          isLoading={
-            isLoading &&
-            uploadedHandIds === null &&
-            (props.handIds?.length ?? 0) === 0
-          }
-        />
+      <Box component="main" sx={handHistoryContentSx}>
+        <HandHistoryTable handIds={uploadedHandIds ?? []} isLoading={isLoading && uploadedHandIds === null} />
       </Box>
       <Snackbar
         open={errorMessage !== null}
@@ -90,12 +72,7 @@ export const HandHistoryView = (props: Props) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         onClose={() => setErrorMessage(null)}
       >
-        <Alert
-          onClose={() => setErrorMessage(null)}
-          severity="error"
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={() => setErrorMessage(null)} severity="error" variant="filled" sx={{ width: "100%" }}>
           {errorMessage}
         </Alert>
       </Snackbar>

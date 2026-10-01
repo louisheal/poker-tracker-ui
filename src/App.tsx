@@ -1,18 +1,13 @@
-import { Box, CssBaseline, ThemeProvider } from "@mui/material";
-import { HandHistoryView } from "./handHistories/HandHistoryView";
-import { NavigationPanel } from "./NavigationPanel";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./theme";
+import { RouterProvider } from "@tanstack/react-router";
+import { router } from "./routing/router";
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", minHeight: "100vh" }}>
-        <NavigationPanel />
-        <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-          <HandHistoryView />
-        </Box>
-      </Box>
+      <RouterProvider router={router} />
     </ThemeProvider>
   );
 };

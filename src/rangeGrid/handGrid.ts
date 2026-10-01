@@ -1,20 +1,4 @@
-import type { PokerRange } from "../model";
-
-const CARD_RANKS = [
-  "A",
-  "K",
-  "Q",
-  "J",
-  "T",
-  "9",
-  "8",
-  "7",
-  "6",
-  "5",
-  "4",
-  "3",
-  "2",
-];
+const CARD_RANKS = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"];
 
 const getHandKey = (row: number, column: number) => {
   const firstRank = CARD_RANKS[row];
@@ -30,11 +14,4 @@ const getHandKey = (row: number, column: number) => {
 };
 
 export const getHandKeysByRow = () =>
-  CARD_RANKS.map((_, row) =>
-    CARD_RANKS.map((__, column) => getHandKey(row, column)),
-  );
-
-export const createFoldGrid = (): PokerRange =>
-  getHandKeysByRow().map((row) =>
-    row.map((HandKey) => ({ HandKey, Action: "Fold" })),
-  );
+  CARD_RANKS.map((_, row) => CARD_RANKS.map((__, column) => getHandKey(row, column)));
