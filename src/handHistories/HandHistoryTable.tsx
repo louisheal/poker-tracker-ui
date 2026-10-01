@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { HandHistoryRow } from "./HandHistoryRow";
+import type { HandHistory } from "./HandHistoryView";
 
 const handHistoryTableSx = {
   width: "min(100%, 560px)",
@@ -31,7 +32,7 @@ const statusMessageSx = {
 } satisfies SxProps<Theme>;
 
 type Props = {
-  handIds: readonly string[];
+  hands: readonly HandHistory[];
   isLoading?: boolean;
 };
 
@@ -42,7 +43,7 @@ export const HandHistoryTable = (props: Props) => {
         <Box role="status" sx={statusMessageSx}>
           <CircularProgress aria-label="Loading hand histories" size={24} />
         </Box>
-      ) : props.handIds.length === 0 ? (
+      ) : props.hands.length === 0 ? (
         <Box role="status" sx={statusMessageSx}>
           <Typography color="text.secondary" variant="body2">
             no hands found
@@ -53,11 +54,12 @@ export const HandHistoryTable = (props: Props) => {
           <TableHead>
             <TableRow>
               <TableCell>Hand ID</TableCell>
+              <TableCell>Hole Cards</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.handIds.map((handId) => (
-              <HandHistoryRow key={handId} handId={handId} />
+            {props.hands.map((hand) => (
+              <HandHistoryRow key={hand.handId} hand={hand} />
             ))}
           </TableBody>
         </Table>

@@ -23,39 +23,61 @@ const handHistoryContentSx = {
   py: 4,
 } satisfies SxProps<Theme>;
 
+export interface HandHistory {
+  handId: string;
+  holeCards: HoleCards;
+}
+
+export interface HoleCards {
+  first: PlayingCard;
+  second: PlayingCard;
+}
+
+export interface PlayingCard {
+  rank: string;
+  suit: string;
+}
+
 export const HandHistoryView = () => {
-  const [uploadedHandIds, setUploadedHandIds] = useState<string[] | null>(null);
+  const [uploadedHands, setUploadedHands] = useState<HandHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const handHistoryRequestVersion = useRef(0);
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const loadUploadedHands = async () => {
     const requestVersion = handHistoryRequestVersion.current;
+    const handHistories = await getHandHistories();
 
-    void getHandHistories(controller.signal)
-      .then((handHistories) => {
-        if (requestVersion === handHistoryRequestVersion.current) {
-          setUploadedHandIds(handHistories.map(({ handId }) => handId));
-        }
-      })
-      .catch((error: unknown) => {
-        if (!controller.signal.aborted && requestVersion === handHistoryRequestVersion.current) {
-          setErrorMessage(error instanceof Error ? error.message : "Could not load hand histories.");
-        }
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
-      });
+    if (requestVersion !== handHistoryRequestVersion.current) {
+      setIsLoading(false);
+      return;
+    }
 
-    return () => controller.abort();
+    const mappedHands = handHistories.map((hand) => ({
+      handId: hand.handId,
+      holeCards: {
+        first: {
+          rank: hand.holeCards.first.rank,
+          suit: hand.holeCards.first.suit,
+        },
+        second: {
+          rank: hand.holeCards.second.rank,
+          suit: hand.holeCards.second.suit,
+        },
+      },
+    }));
+
+    setUploadedHands(mappedHands);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    void loadUploadedHands();
   }, []);
 
-  const handleUploaded = (handIds: string[]) => {
+  const handleUploaded = () => {
     handHistoryRequestVersion.current += 1;
-    setUploadedHandIds(handIds);
+    loadUploadedHands();
   };
 
   return (
@@ -64,7 +86,7 @@ export const HandHistoryView = () => {
         <UploadButton onUploaded={handleUploaded} />
       </Header>
       <Box component="main" sx={handHistoryContentSx}>
-        <HandHistoryTable handIds={uploadedHandIds ?? []} isLoading={isLoading && uploadedHandIds === null} />
+        <HandHistoryTable hands={uploadedHands} isLoading={isLoading} />
       </Box>
       <Snackbar
         open={errorMessage !== null}

@@ -2,9 +2,20 @@ import type { RangeActions } from "./model";
 
 export interface HandHistoryDto {
   handId: string;
+  holeCards: HoleCardsDto;
 }
 
-export interface HandImportummary {
+export interface HoleCardsDto {
+  first: PlayingCardDto;
+  second: PlayingCardDto;
+}
+
+export interface PlayingCardDto {
+  rank: string;
+  suit: string;
+}
+
+export interface HandImportSummary {
   filesReceived: number;
   handsSaved: number;
   duplicateHands: number;
@@ -18,7 +29,7 @@ export const getHandHistories = async (signal?: AbortSignal): Promise<HandHistor
   return parseResponse<HandHistoryDto[]>(response);
 };
 
-export const uploadHandHistories = async (files: readonly File[]): Promise<HandImportummary> => {
+export const uploadHandHistories = async (files: readonly File[]): Promise<HandImportSummary> => {
   const formData = new FormData();
   for (const file of files) {
     formData.append("files", file, file.name);
@@ -29,7 +40,7 @@ export const uploadHandHistories = async (files: readonly File[]): Promise<HandI
     body: formData,
   });
 
-  return parseResponse<HandImportummary>(response);
+  return parseResponse<HandImportSummary>(response);
 };
 
 export const getObservedRange = async (spotKey: string, signal?: AbortSignal): Promise<RangeActions> => {
