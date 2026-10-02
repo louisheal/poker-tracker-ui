@@ -34,6 +34,7 @@ const statusMessageSx = {
 type Props = {
   hands: readonly HandHistory[];
   isLoading?: boolean;
+  onSelectHand: (handId: string) => void;
 };
 
 export const HandHistoryTable = (props: Props) => {
@@ -59,7 +60,11 @@ export const HandHistoryTable = (props: Props) => {
           </TableHead>
           <TableBody>
             {props.hands.map((hand) => (
-              <HandHistoryRow key={hand.handId} hand={hand} />
+              <HandHistoryRow
+                key={hand.handId}
+                hand={hand}
+                onSelect={() => props.onSelectHand(hand.handId)}
+              />
             ))}
           </TableBody>
         </Table>

@@ -5,6 +5,7 @@ import { getHandHistories } from "../api";
 import { Header } from "../Header";
 import { HandHistoryTable } from "./HandHistoryTable";
 import { UploadButton } from "./UploadButton";
+import { HandReplayDialog } from "../handReplays/HandReplayDialog";
 
 const handHistoryViewSx = {
   minHeight: "100vh",
@@ -40,6 +41,7 @@ export interface PlayingCard {
 
 export const HandHistoryView = () => {
   const [uploadedHands, setUploadedHands] = useState<HandHistory[]>([]);
+  const [selectedHandId, setSelectedHandId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const handHistoryRequestVersion = useRef(0);
@@ -86,8 +88,13 @@ export const HandHistoryView = () => {
         <UploadButton onUploaded={handleUploaded} />
       </Header>
       <Box component="main" sx={handHistoryContentSx}>
-        <HandHistoryTable hands={uploadedHands} isLoading={isLoading} />
+        <HandHistoryTable hands={uploadedHands} isLoading={isLoading} onSelectHand={setSelectedHandId} />
       </Box>
+      <HandReplayDialog
+        handId={selectedHandId ?? ""}
+        open={selectedHandId !== null}
+        onClose={() => setSelectedHandId(null)}
+      />
       <Snackbar
         open={errorMessage !== null}
         autoHideDuration={6000}
