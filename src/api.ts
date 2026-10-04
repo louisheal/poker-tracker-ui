@@ -87,7 +87,11 @@ export const replaceHandNote = async (handId: string, note: string): Promise<str
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ note }),
   });
-  return parseResponse<string>(response);
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}`);
+  }
+
+  return response.text();
 };
 
 export const uploadHandHistories = async (files: readonly File[]): Promise<HandImportSummary> => {

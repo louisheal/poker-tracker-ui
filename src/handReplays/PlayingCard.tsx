@@ -14,7 +14,7 @@ const getPlayingCardSx = (backgroundColor: string): SxProps<Theme> => ({
 });
 
 const cardRankSx = {
-  fontSize: 28,
+  fontSize: { xs: 20, md: 28 },
   fontWeight: 800,
   lineHeight: 1,
   color: "inherit",
@@ -24,7 +24,7 @@ const cardSuitSx = {
   position: "absolute",
   top: 4,
   left: 5,
-  fontSize: 12,
+  fontSize: { xs: 10, md: 12 },
   lineHeight: 1,
 } satisfies SxProps<Theme>;
 

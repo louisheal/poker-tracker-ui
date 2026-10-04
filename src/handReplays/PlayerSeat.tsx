@@ -6,8 +6,9 @@ import { PlayingCard } from "./PlayingCard";
 
 const playerSeatSx = {
   position: "relative",
-  width: 144,
-  pt: 4,
+  width: { xs: 76, md: 144 },
+  minWidth: 0,
+  pt: { xs: 2.5, md: 4 },
 } satisfies SxProps<Theme>;
 
 const holeCardsSx = {
@@ -22,14 +23,14 @@ const holeCardsSx = {
 
 const playerInfoSx = {
   display: "flex",
-  minHeight: 76,
+  minHeight: { xs: 56, md: 76 },
   flexDirection: "column",
   alignItems: "center",
   justifyContent: "flex-end",
   gap: 0.25,
-  px: 1,
-  pt: 5,
-  pb: 1,
+  px: { xs: 0.5, md: 1 },
+  pt: { xs: 4, md: 5 },
+  pb: { xs: 0.5, md: 1 },
   border: 1,
   borderColor: "divider",
   borderRadius: 1,
@@ -46,6 +47,11 @@ const nextToActPlayerInfoSx = {
 
 const playerNameSx = {
   maxWidth: "100%",
+  fontSize: { xs: "0.72rem", md: "0.875rem" },
+} satisfies SxProps<Theme>;
+
+const playerStackSx = {
+  fontSize: { xs: "0.68rem", md: "0.875rem" },
 } satisfies SxProps<Theme>;
 
 interface Props {
@@ -80,7 +86,7 @@ export const PlayerSeat = (props: Props) => {
         <Typography component="div" noWrap variant="subtitle2" sx={playerNameSx}>
           {props.name}
         </Typography>
-        <Typography color="text.secondary" component="div" variant="body2">
+        <Typography color="text.secondary" component="div" variant="body2" sx={playerStackSx}>
           {props.stackBB} BB
         </Typography>
       </Box>

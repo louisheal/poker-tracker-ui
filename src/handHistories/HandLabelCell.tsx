@@ -93,7 +93,7 @@ export const HandLabelCell = (props: Props) => {
           );
         })
       }
-      sx={{ minWidth: 170 }}
+      sx={{ width: "100%", minWidth: 0 }}
     />
   );
 };

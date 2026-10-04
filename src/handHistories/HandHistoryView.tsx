@@ -246,9 +246,12 @@ export const HandHistoryView = () => {
       <HandReplayDialog
         handId={selectedHand?.handId ?? ""}
         labels={selectedHand?.labels ?? []}
+        note={selectedHand?.note ?? ""}
         labelOptions={labelOptions}
         open={selectedHand !== null}
         onLabelsChanged={handleLabelsChanged}
+        onNoteChanged={handleNoteChanged}
+        onNoteSaveError={setErrorMessage}
         onClose={() => setSelectedHand(null)}
       />
       <Snackbar

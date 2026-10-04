@@ -9,21 +9,25 @@ import { PlayerSeat } from "./PlayerSeat";
 const positionOrder = ["LJ", "HJ", "CO", "BTN", "SB", "BB"];
 
 const handReplaySpotSx = {
-  overflowX: "auto",
+  width: "100%",
+  minWidth: 0,
 } satisfies SxProps<Theme>;
 
 const pokerTableSx = {
   display: "grid",
   width: "100%",
-  minWidth: 520,
-  minHeight: 420,
-  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-  gridTemplateRows: "auto minmax(240px, 1fr) auto",
-  gridTemplateAreas: '". topCenter ." "leftGroup center rightGroup" ". hero ."',
+  minWidth: 0,
+  minHeight: { xs: 0, md: 420 },
+  gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", md: "repeat(3, minmax(0, 1fr))" },
+  gridTemplateRows: { xs: "auto auto auto auto", md: "auto minmax(240px, 1fr) auto" },
+  gridTemplateAreas: {
+    xs: '"topCenter topCenter" "leftGroup rightGroup" "center center" "hero hero"',
+    md: '". topCenter ." "leftGroup center rightGroup" ". hero ."',
+  },
   alignItems: "center",
   justifyItems: "center",
-  gap: 2,
-  border: "8px solid #075435",
+  gap: { xs: 0.5, md: 2 },
+  border: { xs: "4px solid #075435", md: "8px solid #075435" },
   borderRadius: "48% / 32%",
   bgcolor: "#167a4d",
   boxShadow: "inset 0 0 0 2px rgba(255, 255, 255, 0.12)",
@@ -32,29 +36,34 @@ const pokerTableSx = {
 const leftPlayerGroupSx = {
   gridArea: "leftGroup",
   alignSelf: "stretch",
-  justifySelf: "start",
+  justifySelf: { xs: "stretch", md: "start" },
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-start",
+  alignItems: { xs: "center", md: "flex-start" },
   justifyContent: "center",
-  gap: 2,
+  minWidth: 0,
+  gap: { xs: 0.5, md: 2 },
 } satisfies SxProps<Theme>;
 
 const rightPlayerGroupSx = {
   gridArea: "rightGroup",
   alignSelf: "stretch",
-  justifySelf: "end",
+  justifySelf: { xs: "stretch", md: "end" },
   display: "flex",
   flexDirection: "column",
-  alignItems: "flex-end",
+  alignItems: { xs: "center", md: "flex-end" },
   justifyContent: "center",
-  gap: 2,
+  minWidth: 0,
+  gap: { xs: 0.5, md: 2 },
 } satisfies SxProps<Theme>;
 
 const sideSeatAndBetSx = {
   display: "flex",
+  width: { xs: "100%", md: "auto" },
+  minWidth: 0,
+  flexDirection: { xs: "column", md: "row" },
   alignItems: "center",
-  gap: 1,
+  gap: { xs: 0, md: 1 },
 } satisfies SxProps<Theme>;
 
 const topSeatAndBetSx = {
@@ -67,7 +76,8 @@ const topSeatAndBetSx = {
 
 const betSlotSx = {
   display: "flex",
-  minHeight: 32,
+  width: { xs: "100%", md: "auto" },
+  minHeight: { xs: 16, md: 32 },
   alignItems: "center",
   justifyContent: "center",
 } satisfies SxProps<Theme>;
@@ -75,9 +85,11 @@ const betSlotSx = {
 const tableCenterSx = {
   gridArea: "center",
   display: "flex",
+  minWidth: 0,
+  width: "100%",
   flexDirection: "column",
   alignItems: "center",
-  gap: 1.5,
+  gap: { xs: 0.5, md: 1.5 },
 } satisfies SxProps<Theme>;
 
 const heroSeatAndBetSx = {

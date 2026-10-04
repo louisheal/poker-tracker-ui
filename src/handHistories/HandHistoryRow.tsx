@@ -10,6 +10,7 @@ const handIdButtonSx = {
   justifyContent: "flex-start",
   minWidth: 0,
   px: 0,
+  textAlign: "left",
 } satisfies SxProps<Theme>;
 
 type Props = {
@@ -27,7 +28,7 @@ export const HandHistoryRow = (props: Props) => {
 
   return (
     <TableRow hover>
-      <TableCell component="th" scope="row">
+      <TableCell component="th" scope="row" data-label="Hand ID">
         <Button
           aria-label={`Open replay for hand ${props.hand.handId}`}
           onClick={() => props.onSelect(props.hand)}
@@ -37,13 +38,13 @@ export const HandHistoryRow = (props: Props) => {
           {props.hand.handId}
         </Button>
       </TableCell>
-      <TableCell>
+      <TableCell data-label="Hole Cards">
         {props.hand.holeCards.first.rank}
         {props.hand.holeCards.first.suit} {props.hand.holeCards.second.rank}
         {props.hand.holeCards.second.suit}
       </TableCell>
       {handLabelStreets.map((street) => (
-        <TableCell key={street}>
+        <TableCell key={street} data-label={street}>
           <HandLabelCell
             key={`${props.hand.handId}:${street}:${labelsKey}`}
             hand={props.hand}
@@ -54,7 +55,7 @@ export const HandHistoryRow = (props: Props) => {
           />
         </TableCell>
       ))}
-      <TableCell sx={{ minWidth: 320 }}>
+      <TableCell data-label="Notes">
         <HandNoteCell
           key={`${props.hand.handId}:${props.hand.note}`}
           handId={props.hand.handId}

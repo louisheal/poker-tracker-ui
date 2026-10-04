@@ -5,6 +5,9 @@ import { PlayingCard } from "./PlayingCard";
 
 const communityCardsSx = {
   display: "flex",
+  justifyContent: "center",
+  gap: { xs: 0.25, md: 0.5 },
+  minWidth: 0,
 } satisfies SxProps<Theme>;
 
 interface Props {

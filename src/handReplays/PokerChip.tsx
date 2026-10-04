@@ -4,15 +4,16 @@ import type { SxProps, Theme } from "@mui/material/styles";
 const pokerChipContainerSx = {
   display: "flex",
   alignItems: "center",
-  gap: 0.5,
+  justifyContent: "center",
+  gap: { xs: 0.25, md: 0.5 },
 } satisfies SxProps<Theme>;
 
 const pokerChipSx = {
   display: "grid",
-  width: 24,
+  width: { xs: 16, md: 24 },
   aspectRatio: "1",
   placeItems: "center",
-  border: "3px dashed #fff",
+  border: { xs: "2px dashed #fff", md: "3px dashed #fff" },
   borderRadius: "50%",
   bgcolor: "#b33d45",
   boxShadow: "0 1px 3px rgba(0, 0, 0, 0.35)",
@@ -21,6 +22,7 @@ const pokerChipSx = {
 const pokerChipAmountSx = {
   fontWeight: 700,
   whiteSpace: "nowrap",
+  fontSize: { xs: "0.6rem", md: "0.75rem" },
 } satisfies SxProps<Theme>;
 
 interface Props {

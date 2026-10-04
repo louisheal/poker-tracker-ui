@@ -38,6 +38,7 @@ export const HandNoteCell = (props: Props) => {
         maxRows={4}
         placeholder="Add a note"
         size="small"
+        sx={{ flex: "1 1 auto", minWidth: 0 }}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
       />
