@@ -24,8 +24,9 @@ export interface HandImportSummary {
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
-export const getHandHistories = async (signal?: AbortSignal): Promise<HandHistoryDto[]> => {
-  const response = await fetch(`${apiBaseUrl}/api/handhistories`, { signal });
+export const getHandHistories = async (signal?: AbortSignal, heroSawFlop?: boolean): Promise<HandHistoryDto[]> => {
+  const query = heroSawFlop === undefined ? "" : `?${new URLSearchParams({ heroSawFlop: String(heroSawFlop) })}`;
+  const response = await fetch(`${apiBaseUrl}/api/handhistories${query}`, { signal });
   return parseResponse<HandHistoryDto[]>(response);
 };
 
