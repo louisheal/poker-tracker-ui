@@ -119,10 +119,11 @@ export const HandReplaySpot = (props: Props) => {
   };
 
   const getBetAmount = (position: string) => props.handReplaySpot.playersBetsBB[position] ?? 0;
+  const getAwardAmount = (position: string) => props.handReplaySpot.winningsBB[position] ?? 0;
 
-  const renderBetSlot = (position: string) => (
+  const renderBetSlot = (amountBB: number) => (
     <Box sx={betSlotSx}>
-      <PokerChip amountBB={getBetAmount(position)} />
+      <PokerChip amountBB={amountBB} />
     </Box>
   );
 
@@ -139,7 +140,8 @@ export const HandReplaySpot = (props: Props) => {
                 nextToAct={props.handReplaySpot.nextToAct}
                 holeCards={getHoleCards(position)}
               />
-              <PokerChip amountBB={getBetAmount(position)} />
+              {renderBetSlot(getBetAmount(position))}
+              {renderBetSlot(getAwardAmount(position))}
             </Box>
           ))}
         </Box>
@@ -152,13 +154,15 @@ export const HandReplaySpot = (props: Props) => {
               nextToAct={props.handReplaySpot.nextToAct}
               holeCards={getHoleCards(topPosition)}
             />
-            {renderBetSlot(topPosition)}
+            {renderBetSlot(getBetAmount(topPosition))}
+            {renderBetSlot(getAwardAmount(topPosition))}
           </Box>
         )}
         <Box sx={rightPlayerGroupSx}>
           {rightPositions.map((position) => (
             <Box key={position} sx={sideSeatAndBetSx}>
-              <PokerChip amountBB={getBetAmount(position)} />
+              {renderBetSlot(getBetAmount(position))}
+              {renderBetSlot(getAwardAmount(position))}
               <PlayerSeat
                 name={position}
                 stackBB={props.handReplaySpot.remainingStacksBB[position]}
@@ -176,7 +180,8 @@ export const HandReplaySpot = (props: Props) => {
           <CommunityCards cards={props.handReplaySpot.board} />
         </Box>
         <Box sx={heroSeatAndBetSx}>
-          {renderBetSlot(props.heroPosition)}
+          {renderBetSlot(getBetAmount(props.heroPosition))}
+          {renderBetSlot(getAwardAmount(props.heroPosition))}
           <PlayerSeat
             name={props.heroPosition}
             stackBB={props.handReplaySpot.remainingStacksBB[props.heroPosition]}
