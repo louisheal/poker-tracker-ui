@@ -10,15 +10,16 @@ import {
   Typography,
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
+import type { HandLabelAssignment, HandLabelOption } from "../api";
 import { HandHistoryRow } from "./HandHistoryRow";
 import type { HandHistory } from "./HandHistoryView";
 
 const handHistoryTableSx = {
-  width: "min(100%, 560px)",
+  width: "min(100%, 1350px)",
   minHeight: 196,
   display: "grid",
   placeItems: "center",
-  overflow: "hidden",
+  overflowX: "auto",
   bgcolor: "background.paper",
   border: 1,
   borderColor: "divider",
@@ -33,8 +34,13 @@ const statusMessageSx = {
 
 type Props = {
   hands: readonly HandHistory[];
+  labelOptions: readonly HandLabelOption[];
   isLoading?: boolean;
-  onSelectHand: (handId: string) => void;
+  onSelectHand: (hand: HandHistory) => void;
+  onLabelsChanged: (handId: string, labels: HandLabelAssignment[]) => void;
+  onLabelSaveError: (message: string) => void;
+  onNoteChanged: (handId: string, note: string) => void;
+  onNoteSaveError: (message: string) => void;
 };
 
 export const HandHistoryTable = (props: Props) => {
@@ -51,11 +57,15 @@ export const HandHistoryTable = (props: Props) => {
           </Typography>
         </Box>
       ) : (
-        <Table size="small" aria-label="Hand histories">
+        <Table size="small" aria-label="Hand histories" sx={{ minWidth: 1200 }}>
           <TableHead>
             <TableRow>
               <TableCell>Hand ID</TableCell>
               <TableCell>Hole Cards</TableCell>
+              <TableCell>Flop</TableCell>
+              <TableCell>Turn</TableCell>
+              <TableCell>River</TableCell>
+              <TableCell>Notes</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -63,7 +73,12 @@ export const HandHistoryTable = (props: Props) => {
               <HandHistoryRow
                 key={hand.handId}
                 hand={hand}
-                onSelect={() => props.onSelectHand(hand.handId)}
+                labelOptions={props.labelOptions}
+                onSelect={props.onSelectHand}
+                onLabelsChanged={props.onLabelsChanged}
+                onLabelSaveError={props.onLabelSaveError}
+                onNoteChanged={props.onNoteChanged}
+                onNoteSaveError={props.onNoteSaveError}
               />
             ))}
           </TableBody>

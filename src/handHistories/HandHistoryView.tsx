@@ -1,10 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Alert, Box, FormControlLabel, Snackbar, Switch } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
+import TextField from "@mui/material/TextField";
 import type { SxProps, Theme } from "@mui/material/styles";
-import { getHandHistories } from "../api";
+import { getHandHistories, getHandLabelOptions } from "../api";
+import type { HandLabelAssignment, HandLabelOption } from "../api";
 import { Header } from "../Header";
 import { HandHistoryTable } from "./HandHistoryTable";
 import { UploadButton } from "./UploadButton";
+import { getHandLabelColor } from "./handLabelStyles";
 import { HandReplayDialog } from "../handReplays/HandReplayDialog";
 
 const handHistoryViewSx = {
@@ -32,9 +37,13 @@ const errorAlertSx = {
   width: "100%",
 } satisfies SxProps<Theme>;
 
+const unlabelledFilterValue = "__unlabelled__";
+
 export interface HandHistory {
   handId: string;
   holeCards: HoleCards;
+  labels: HandLabelAssignment[];
+  note: string;
 }
 
 export interface HoleCards {
@@ -49,7 +58,9 @@ export interface PlayingCard {
 
 export const HandHistoryView = () => {
   const [uploadedHands, setUploadedHands] = useState<HandHistory[]>([]);
-  const [selectedHandId, setSelectedHandId] = useState<string | null>(null);
+  const [selectedHand, setSelectedHand] = useState<HandHistory | null>(null);
+  const [labelOptions, setLabelOptions] = useState<HandLabelOption[]>([]);
+  const [selectedLabelFilters, setSelectedLabelFilters] = useState<string[]>([]);
   const [showHeroSawFlopOnly, setShowHeroSawFlopOnly] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshVersion, setRefreshVersion] = useState(0);
@@ -57,12 +68,32 @@ export const HandHistoryView = () => {
   const handHistoryRequestVersion = useRef(0);
 
   useEffect(() => {
+    const controller = new AbortController();
+    void getHandLabelOptions(controller.signal)
+      .then(setLabelOptions)
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          setErrorMessage(error instanceof Error ? error.message : "Hand labels could not be loaded.");
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
     const requestVersion = ++handHistoryRequestVersion.current;
     const controller = new AbortController();
 
     const loadUploadedHands = async () => {
       try {
-        const handHistories = await getHandHistories(controller.signal, showHeroSawFlopOnly ? true : undefined);
+        const includeUnlabelled = selectedLabelFilters.includes(unlabelledFilterValue);
+        const selectedLabels = selectedLabelFilters.filter((label) => label !== unlabelledFilterValue);
+        const handHistories = await getHandHistories(
+          controller.signal,
+          showHeroSawFlopOnly ? true : undefined,
+          selectedLabels,
+          includeUnlabelled,
+        );
 
         if (requestVersion !== handHistoryRequestVersion.current) {
           return;
@@ -70,6 +101,8 @@ export const HandHistoryView = () => {
 
         const mappedHands = handHistories.map((hand) => ({
           handId: hand.handId,
+          labels: hand.labels,
+          note: hand.note,
           holeCards: {
             first: {
               rank: hand.holeCards.first.rank,
@@ -100,7 +133,32 @@ export const HandHistoryView = () => {
       controller.abort();
       handHistoryRequestVersion.current += 1;
     };
-  }, [refreshVersion, showHeroSawFlopOnly]);
+  }, [refreshVersion, selectedLabelFilters, showHeroSawFlopOnly]);
+
+  const handleLabelsChanged = (handId: string, labels: HandLabelAssignment[]) => {
+    const selectedLabels = selectedLabelFilters.filter((label) => label !== unlabelledFilterValue);
+    const includeUnlabelled = selectedLabelFilters.includes(unlabelledFilterValue);
+    setUploadedHands((hands) =>
+      hands
+        .map((hand) => (hand.handId === handId ? { ...hand, labels } : hand))
+        .filter(
+          (hand) =>
+            selectedLabelFilters.length === 0 ||
+            hand.labels.some((label) => selectedLabels.includes(label.label)) ||
+            (includeUnlabelled && hand.labels.length === 0),
+        ),
+    );
+    setSelectedHand((hand) => (hand?.handId === handId ? { ...hand, labels } : hand));
+    if (selectedLabelFilters.length > 0) {
+      setIsLoading(true);
+      setRefreshVersion((version) => version + 1);
+    }
+  };
+
+  const handleNoteChanged = (handId: string, note: string) => {
+    setUploadedHands((hands) => hands.map((hand) => (hand.handId === handId ? { ...hand, note } : hand)));
+    setSelectedHand((hand) => (hand?.handId === handId ? { ...hand, note } : hand));
+  };
 
   const handleUploaded = () => {
     handHistoryRequestVersion.current += 1;
@@ -116,6 +174,50 @@ export const HandHistoryView = () => {
       </Header>
       <Box component="main" sx={handHistoryContentSx}>
         <Box sx={handHistoryFilterSx}>
+          <Autocomplete
+            multiple
+            options={[...labelOptions, { value: unlabelledFilterValue, name: "Unlabelled", category: "No labels" }]}
+            value={[
+              ...labelOptions,
+              { value: unlabelledFilterValue, name: "Unlabelled", category: "No labels" },
+            ].filter((option) => selectedLabelFilters.includes(option.value))}
+            groupBy={(option) => option.category}
+            getOptionLabel={(option) => option.name}
+            onChange={(_, options) => {
+              setErrorMessage(null);
+              setIsLoading(true);
+              setSelectedLabelFilters(options.map((option) => option.value));
+            }}
+            renderInput={(params) => <TextField {...params} label="Filter by labels" />}
+            renderOption={(optionProps, option) => (
+              <li {...optionProps}>
+                {option.value !== unlabelledFilterValue && (
+                  <Chip
+                    label={option.category}
+                    size="small"
+                    sx={{ bgcolor: getHandLabelColor(option.category), color: "common.white", mr: 1 }}
+                  />
+                )}
+                {option.name}
+              </li>
+            )}
+            renderValue={(options, getItemProps) => (
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                {options.map((option, index) => {
+                  const { key, ...itemProps } = getItemProps({ index });
+                  return (
+                    <Chip
+                      key={key}
+                      label={option.name}
+                      size="small"
+                      {...itemProps}
+                      sx={{ bgcolor: getHandLabelColor(option.category), color: "common.white" }}
+                    />
+                  );
+                })}
+              </Box>
+            )}
+          />
           <FormControlLabel
             control={
               <Switch
@@ -130,12 +232,24 @@ export const HandHistoryView = () => {
             label="Show hands where hero saw the flop"
           />
         </Box>
-        <HandHistoryTable hands={uploadedHands} isLoading={isLoading} onSelectHand={setSelectedHandId} />
+        <HandHistoryTable
+          hands={uploadedHands}
+          labelOptions={labelOptions}
+          isLoading={isLoading}
+          onSelectHand={setSelectedHand}
+          onLabelsChanged={handleLabelsChanged}
+          onLabelSaveError={setErrorMessage}
+          onNoteChanged={handleNoteChanged}
+          onNoteSaveError={setErrorMessage}
+        />
       </Box>
       <HandReplayDialog
-        handId={selectedHandId ?? ""}
-        open={selectedHandId !== null}
-        onClose={() => setSelectedHandId(null)}
+        handId={selectedHand?.handId ?? ""}
+        labels={selectedHand?.labels ?? []}
+        labelOptions={labelOptions}
+        open={selectedHand !== null}
+        onLabelsChanged={handleLabelsChanged}
+        onClose={() => setSelectedHand(null)}
       />
       <Snackbar
         open={errorMessage !== null}

@@ -3,6 +3,25 @@ import type { RangeActions } from "./model";
 export interface HandHistoryDto {
   handId: string;
   holeCards: HoleCardsDto;
+  labels: HandLabelAssignment[];
+  note: string;
+}
+
+export const handLabelStreets = ["Flop", "Turn", "River"] as const;
+
+export type HandLabelStreet = (typeof handLabelStreets)[number];
+
+export interface HandLabelAssignment {
+  street: HandLabelStreet;
+  label: string;
+}
+
+export type HandLabelsByStreet = Record<HandLabelStreet, string[]>;
+
+export interface HandLabelOption {
+  value: string;
+  name: string;
+  category: string;
 }
 
 export interface HoleCardsDto {
@@ -24,10 +43,51 @@ export interface HandImportSummary {
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
 
-export const getHandHistories = async (signal?: AbortSignal, heroSawFlop?: boolean): Promise<HandHistoryDto[]> => {
-  const query = heroSawFlop === undefined ? "" : `?${new URLSearchParams({ heroSawFlop: String(heroSawFlop) })}`;
-  const response = await fetch(`${apiBaseUrl}/api/handhistories${query}`, { signal });
+export const getHandHistories = async (
+  signal?: AbortSignal,
+  heroSawFlop?: boolean,
+  labels: readonly string[] = [],
+  includeUnlabelled = false,
+): Promise<HandHistoryDto[]> => {
+  const query = new URLSearchParams();
+  if (heroSawFlop !== undefined) {
+    query.set("heroSawFlop", String(heroSawFlop));
+  }
+  labels.forEach((label) => query.append("labels", label));
+  if (includeUnlabelled) {
+    query.set("includeUnlabelled", "true");
+  }
+  const queryString = query.toString();
+  const response = await fetch(`${apiBaseUrl}/api/handhistories${queryString.length > 0 ? `?${queryString}` : ""}`, {
+    signal,
+  });
   return parseResponse<HandHistoryDto[]>(response);
+};
+
+export const getHandLabelOptions = async (signal?: AbortSignal): Promise<HandLabelOption[]> => {
+  const response = await fetch(`${apiBaseUrl}/api/handnotes/labels`, { signal });
+  return parseResponse<HandLabelOption[]>(response);
+};
+
+export const replaceHandLabels = async (
+  handId: string,
+  labelsByStreet: HandLabelsByStreet,
+): Promise<HandLabelAssignment[]> => {
+  const response = await fetch(`${apiBaseUrl}/api/handnotes/${encodeURIComponent(handId)}/labels`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ labelsByStreet }),
+  });
+  return parseResponse<HandLabelAssignment[]>(response);
+};
+
+export const replaceHandNote = async (handId: string, note: string): Promise<string> => {
+  const response = await fetch(`${apiBaseUrl}/api/handnotes/${encodeURIComponent(handId)}/note`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ note }),
+  });
+  return parseResponse<string>(response);
 };
 
 export const uploadHandHistories = async (files: readonly File[]): Promise<HandImportSummary> => {

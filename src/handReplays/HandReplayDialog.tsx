@@ -1,5 +1,7 @@
-import { Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import { Box, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
+import type { HandLabelAssignment, HandLabelOption } from "../api";
+import { HandLabelEditor } from "../handHistories/HandLabelEditor";
 import { HandReplay } from "./HandReplay";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -16,7 +18,10 @@ const dialogContentSx = {
 
 interface Props {
   handId: string;
+  labels: HandLabelAssignment[];
+  labelOptions: readonly HandLabelOption[];
   open: boolean;
+  onLabelsChanged: (handId: string, labels: HandLabelAssignment[]) => void;
   onClose: () => void;
 }
 
@@ -37,6 +42,17 @@ export const HandReplayDialog = (props: Props) => {
       </DialogTitle>
       <DialogContent dividers sx={dialogContentSx}>
         <HandReplay key={props.handId} handId={props.handId} />
+        {props.open && (
+          <Box sx={{ px: 2, py: 2 }}>
+            <HandLabelEditor
+              key={`${props.handId}:${props.labels.map((label) => `${label.street}:${label.label}`).join(",")}`}
+              handId={props.handId}
+              labels={props.labels}
+              labelOptions={props.labelOptions}
+              onLabelsChanged={props.onLabelsChanged}
+            />
+          </Box>
+        )}
       </DialogContent>
     </Dialog>
   );
