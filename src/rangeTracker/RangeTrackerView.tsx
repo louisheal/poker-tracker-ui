@@ -27,6 +27,10 @@ const rangeLoadingSx = {
   py: 4,
 } satisfies SxProps<Theme>;
 
+const rangeHeadingSx = {
+  fontWeight: 600,
+} satisfies SxProps<Theme>;
+
 export const RangeTrackerView = () => {
   const {
     spotKey,
@@ -48,7 +52,7 @@ export const RangeTrackerView = () => {
     <Box sx={rangeTrackerViewSx}>
       <Header />
       <Box component="main" sx={rangeTrackerContentSx}>
-        <Typography component="h2" variant="h5" sx={{ fontWeight: 600 }}>
+        <Typography component="h2" variant="h5" sx={rangeHeadingSx}>
           Range Tracker
         </Typography>
         <RangeTrackerControls

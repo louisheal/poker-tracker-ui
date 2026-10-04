@@ -1,5 +1,12 @@
 import { Button, TableCell, TableRow } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { HandHistory } from "./HandHistoryView";
+
+const handIdButtonSx = {
+  justifyContent: "flex-start",
+  minWidth: 0,
+  px: 0,
+} satisfies SxProps<Theme>;
 
 type Props = {
   hand: HandHistory;
@@ -13,7 +20,7 @@ export const HandHistoryRow = (props: Props) => {
         <Button
           aria-label={`Open replay for hand ${props.hand.handId}`}
           onClick={props.onSelect}
-          sx={{ justifyContent: "flex-start", minWidth: 0, px: 0 }}
+          sx={handIdButtonSx}
           variant="text"
         >
           {props.hand.handId}

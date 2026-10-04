@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { HoleCardsDto } from "../api";
 import { CommunityCards } from "./CommunityCards";
 import type { HandReplaySpotDto } from "./dto";
@@ -6,6 +7,86 @@ import { PokerChip } from "./PokerChip";
 import { PlayerSeat } from "./PlayerSeat";
 
 const positionOrder = ["LJ", "HJ", "CO", "BTN", "SB", "BB"];
+
+const handReplaySpotSx = {
+  overflowX: "auto",
+} satisfies SxProps<Theme>;
+
+const pokerTableSx = {
+  display: "grid",
+  width: "100%",
+  minWidth: 520,
+  minHeight: 420,
+  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+  gridTemplateRows: "auto minmax(240px, 1fr) auto",
+  gridTemplateAreas: '". topCenter ." "leftGroup center rightGroup" ". hero ."',
+  alignItems: "center",
+  justifyItems: "center",
+  gap: 2,
+  border: "8px solid #075435",
+  borderRadius: "48% / 32%",
+  bgcolor: "#167a4d",
+  boxShadow: "inset 0 0 0 2px rgba(255, 255, 255, 0.12)",
+} satisfies SxProps<Theme>;
+
+const leftPlayerGroupSx = {
+  gridArea: "leftGroup",
+  alignSelf: "stretch",
+  justifySelf: "start",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
+  justifyContent: "center",
+  gap: 2,
+} satisfies SxProps<Theme>;
+
+const rightPlayerGroupSx = {
+  gridArea: "rightGroup",
+  alignSelf: "stretch",
+  justifySelf: "end",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  justifyContent: "center",
+  gap: 2,
+} satisfies SxProps<Theme>;
+
+const sideSeatAndBetSx = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1,
+} satisfies SxProps<Theme>;
+
+const topSeatAndBetSx = {
+  gridArea: "topCenter",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: 1,
+} satisfies SxProps<Theme>;
+
+const betSlotSx = {
+  display: "flex",
+  minHeight: 32,
+  alignItems: "center",
+  justifyContent: "center",
+} satisfies SxProps<Theme>;
+
+const tableCenterSx = {
+  gridArea: "center",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: 1.5,
+} satisfies SxProps<Theme>;
+
+const heroSeatAndBetSx = {
+  gridArea: "hero",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: 1,
+} satisfies SxProps<Theme>;
 
 interface Props {
   heroPosition: string;
@@ -40,51 +121,22 @@ export const HandReplaySpot = (props: Props) => {
   const getBetAmount = (position: string) => props.handReplaySpot.playersBetsBB[position] ?? 0;
 
   const renderBetSlot = (position: string) => (
-    <Box sx={{ display: "flex", minHeight: 32, alignItems: "center", justifyContent: "center" }}>
+    <Box sx={betSlotSx}>
       <PokerChip amountBB={getBetAmount(position)} />
     </Box>
   );
 
   return (
-    <Box sx={{ overflowX: "auto" }}>
-      <Box
-        role="region"
-        aria-label={`${props.handReplaySpot.street} poker table`}
-        sx={{
-          display: "grid",
-          width: "100%",
-          minWidth: 520,
-          minHeight: 420,
-          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-          gridTemplateRows: "auto minmax(240px, 1fr) auto",
-          gridTemplateAreas: '". topCenter ." "leftGroup center rightGroup" ". hero ."',
-          alignItems: "center",
-          justifyItems: "center",
-          gap: 2,
-          border: "8px solid #075435",
-          borderRadius: "48% / 32%",
-          bgcolor: "#167a4d",
-          boxShadow: "inset 0 0 0 2px rgba(255, 255, 255, 0.12)",
-        }}
-      >
-        <Box
-          sx={{
-            gridArea: "leftGroup",
-            alignSelf: "stretch",
-            justifySelf: "start",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
+    <Box sx={handReplaySpotSx}>
+      <Box role="region" aria-label={`${props.handReplaySpot.street} poker table`} sx={pokerTableSx}>
+        <Box sx={leftPlayerGroupSx}>
           {leftPositions.map((position) => (
-            <Box key={position} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box key={position} sx={sideSeatAndBetSx}>
               <PlayerSeat
                 name={position}
                 stackBB={props.handReplaySpot.remainingStacksBB[position]}
                 active={props.handReplaySpot.activePlayers.includes(position)}
+                nextToAct={props.handReplaySpot.nextToAct}
                 holeCards={getHoleCards(position)}
               />
               <PokerChip amountBB={getBetAmount(position)} />
@@ -92,76 +144,44 @@ export const HandReplaySpot = (props: Props) => {
           ))}
         </Box>
         {topPosition !== undefined && (
-          <Box
-            sx={{
-              gridArea: "topCenter",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
+          <Box sx={topSeatAndBetSx}>
             <PlayerSeat
               name={topPosition}
               stackBB={props.handReplaySpot.remainingStacksBB[topPosition]}
               active={props.handReplaySpot.activePlayers.includes(topPosition)}
+              nextToAct={props.handReplaySpot.nextToAct}
               holeCards={getHoleCards(topPosition)}
             />
             {renderBetSlot(topPosition)}
           </Box>
         )}
-        <Box
-          sx={{
-            gridArea: "rightGroup",
-            alignSelf: "stretch",
-            justifySelf: "end",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-end",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
+        <Box sx={rightPlayerGroupSx}>
           {rightPositions.map((position) => (
-            <Box key={position} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Box key={position} sx={sideSeatAndBetSx}>
               <PokerChip amountBB={getBetAmount(position)} />
               <PlayerSeat
                 name={position}
                 stackBB={props.handReplaySpot.remainingStacksBB[position]}
                 active={props.handReplaySpot.activePlayers.includes(position)}
+                nextToAct={props.handReplaySpot.nextToAct}
                 holeCards={getHoleCards(position)}
               />
             </Box>
           ))}
         </Box>
-        <Box
-          sx={{
-            gridArea: "center",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1.5,
-          }}
-        >
+        <Box sx={tableCenterSx}>
           <Typography color="common.white" variant="body2">
             Pot: {props.handReplaySpot.potBB} BB
           </Typography>
           <CommunityCards cards={props.handReplaySpot.board} />
         </Box>
-        <Box
-          sx={{
-            gridArea: "hero",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
+        <Box sx={heroSeatAndBetSx}>
           {renderBetSlot(props.heroPosition)}
           <PlayerSeat
             name={props.heroPosition}
             stackBB={props.handReplaySpot.remainingStacksBB[props.heroPosition]}
             active={props.handReplaySpot.activePlayers.includes(props.heroPosition)}
+            nextToAct={props.handReplaySpot.nextToAct}
             holeCards={props.heroHoleCards}
           />
         </Box>

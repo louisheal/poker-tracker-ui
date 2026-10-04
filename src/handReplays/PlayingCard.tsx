@@ -1,5 +1,32 @@
 import { Box, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
 import { cardFrameSx } from "./cardStyles";
+
+const playingCardBaseSx = {
+  ...cardFrameSx,
+  border: "1px solid rgba(255, 255, 255, 0.22)",
+  color: "#fff",
+} satisfies SxProps<Theme>;
+
+const getPlayingCardSx = (backgroundColor: string): SxProps<Theme> => ({
+  ...playingCardBaseSx,
+  bgcolor: backgroundColor,
+});
+
+const cardRankSx = {
+  fontSize: 28,
+  fontWeight: 800,
+  lineHeight: 1,
+  color: "inherit",
+} satisfies SxProps<Theme>;
+
+const cardSuitSx = {
+  position: "absolute",
+  top: 4,
+  left: 5,
+  fontSize: 12,
+  lineHeight: 1,
+} satisfies SxProps<Theme>;
 
 interface Props {
   rank: string;
@@ -21,24 +48,11 @@ export const PlayingCard = (props: Props) => {
   };
 
   return (
-    <Box
-      role="img"
-      aria-label={`${props.rank} of ${suit.name}`}
-      sx={{
-        ...cardFrameSx,
-        border: "1px solid rgba(255, 255, 255, 0.22)",
-        bgcolor: suit.color,
-        color: "#fff",
-      }}
-    >
-      <Typography component="span" sx={{ fontSize: 28, fontWeight: 800, lineHeight: 1, color: "inherit" }}>
+    <Box role="img" aria-label={`${props.rank} of ${suit.name}`} sx={getPlayingCardSx(suit.color)}>
+      <Typography component="span" sx={cardRankSx}>
         {props.rank}
       </Typography>
-      <Typography
-        component="span"
-        aria-hidden="true"
-        sx={{ position: "absolute", top: 4, left: 5, fontSize: 12, lineHeight: 1 }}
-      >
+      <Typography component="span" aria-hidden="true" sx={cardSuitSx}>
         {suit.symbol}
       </Typography>
     </Box>

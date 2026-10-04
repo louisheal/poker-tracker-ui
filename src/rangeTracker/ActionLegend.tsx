@@ -20,17 +20,17 @@ const actionSwatchSx = {
   borderRadius: 0.5,
 } satisfies SxProps<Theme>;
 
+const getActionSwatchSx = (action: keyof typeof rangeActionColors): SxProps<Theme> => ({
+  ...actionSwatchSx,
+  bgcolor: rangeActionColors[action],
+});
+
 export const ActionLegend = () => {
   return (
     <Box sx={actionLegendSx} aria-label="Action colors">
       {(["Fold", "Call", "Raise"] as const).map((action) => (
         <Box key={action} sx={actionLegendItemSx}>
-          <Box
-            sx={{
-              bgcolor: rangeActionColors[action],
-              ...actionSwatchSx,
-            }}
-          />
+          <Box sx={getActionSwatchSx(action)} />
           <Typography variant="caption">{action}</Typography>
         </Box>
       ))}

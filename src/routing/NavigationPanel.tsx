@@ -19,6 +19,14 @@ const navigationDrawerSx = {
   },
 } satisfies SxProps<Theme>;
 
+const navigationSx = {
+  pt: 1,
+} satisfies SxProps<Theme>;
+
+const navigationListSx = {
+  px: { xs: 0.5, sm: 1 },
+} satisfies SxProps<Theme>;
+
 type Props = {
   isRangeTracker: boolean;
 };
@@ -26,8 +34,8 @@ type Props = {
 export const NavigationPanel = (props: Props) => {
   return (
     <Drawer variant="permanent" sx={navigationDrawerSx}>
-      <Box component="nav" aria-label="Main navigation" sx={{ pt: 1 }}>
-        <List sx={{ px: { xs: 0.5, sm: 1 } }}>
+      <Box component="nav" aria-label="Main navigation" sx={navigationSx}>
+        <List sx={navigationListSx}>
           <NavigationItem icon={<HistoryIcon />} label="Hand Histories" route="/" selected={!props.isRangeTracker} />
           <NavigationItem
             icon={<QueryStatsIcon />}

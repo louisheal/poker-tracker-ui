@@ -1,6 +1,13 @@
 import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
+import type { SxProps, Theme } from "@mui/material/styles";
+
+const handReplayControlsSx = {
+  display: "flex",
+  alignItems: "center",
+  gap: 1,
+} satisfies SxProps<Theme>;
 
 interface Props {
   index: number;
@@ -15,7 +22,7 @@ export const HandReplayControls = (props: Props) => {
   const displayedIndex = props.length === 0 ? 0 : props.index + 1;
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+    <Box sx={handReplayControlsSx}>
       <Tooltip title="Previous action">
         <span>
           <IconButton

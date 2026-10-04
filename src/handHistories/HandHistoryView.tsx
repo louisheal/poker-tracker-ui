@@ -24,6 +24,10 @@ const handHistoryContentSx = {
   py: 4,
 } satisfies SxProps<Theme>;
 
+const errorAlertSx = {
+  width: "100%",
+} satisfies SxProps<Theme>;
+
 export interface HandHistory {
   handId: string;
   holeCards: HoleCards;
@@ -101,7 +105,7 @@ export const HandHistoryView = () => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         onClose={() => setErrorMessage(null)}
       >
-        <Alert onClose={() => setErrorMessage(null)} severity="error" variant="filled" sx={{ width: "100%" }}>
+        <Alert onClose={() => setErrorMessage(null)} severity="error" variant="filled" sx={errorAlertSx}>
           {errorMessage}
         </Alert>
       </Snackbar>
