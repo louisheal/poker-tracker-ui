@@ -1,5 +1,7 @@
 import HistoryIcon from "@mui/icons-material/History";
+import InsightsIcon from "@mui/icons-material/Insights";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
+import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
 import { Box, Drawer, List } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { NavigationItem } from "./NavigationItem";
@@ -28,7 +30,7 @@ const navigationListSx = {
 } satisfies SxProps<Theme>;
 
 type Props = {
-  isRangeTracker: boolean;
+  pathname: string;
 };
 
 export const NavigationPanel = (props: Props) => {
@@ -36,12 +38,24 @@ export const NavigationPanel = (props: Props) => {
     <Drawer variant="permanent" sx={navigationDrawerSx}>
       <Box component="nav" aria-label="Main navigation" sx={navigationSx}>
         <List sx={navigationListSx}>
-          <NavigationItem icon={<HistoryIcon />} label="Hand Histories" route="/" selected={!props.isRangeTracker} />
+          <NavigationItem icon={<HistoryIcon />} label="Hand Histories" route="/" selected={props.pathname === "/"} />
           <NavigationItem
             icon={<QueryStatsIcon />}
             label="Range Tracker"
             route="/range-tracker"
-            selected={props.isRangeTracker}
+            selected={props.pathname === "/range-tracker"}
+          />
+          <NavigationItem
+            icon={<SpaceDashboardIcon />}
+            label="Dashboard"
+            route="/dashboard"
+            selected={props.pathname === "/dashboard"}
+          />
+          <NavigationItem
+            icon={<InsightsIcon />}
+            label="Diagnostics"
+            route="/diagnostics"
+            selected={props.pathname === "/diagnostics"}
           />
         </List>
       </Box>

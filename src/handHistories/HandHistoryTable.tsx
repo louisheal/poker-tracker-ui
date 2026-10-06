@@ -1,18 +1,8 @@
-import {
-  Box,
-  CircularProgress,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-} from "@mui/material";
+import { Box, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { HandLabelAssignment, HandLabelOption } from "../api";
+import type { HandLabelOption } from "../api";
 import { HandHistoryRow } from "./HandHistoryRow";
-import type { HandHistory } from "./HandHistoryView";
+import type { HandHistory } from "./types";
 
 const handHistoryTableSx = {
   width: "min(100%, 1350px)",
@@ -41,12 +31,10 @@ const handHistoryTableContentSx = ((theme: Theme) => ({
     fontSize: fluidFontSize,
     lineHeight: 1.3,
   },
-  "& .MuiTableCell-root:nth-of-type(1)": { width: "14%" },
-  "& .MuiTableCell-root:nth-of-type(2)": { width: "10%" },
-  "& .MuiTableCell-root:nth-of-type(3), & .MuiTableCell-root:nth-of-type(4), & .MuiTableCell-root:nth-of-type(5)": {
-    width: "14%",
-  },
-  "& .MuiTableCell-root:nth-of-type(6)": { width: "34%" },
+  "& .MuiTableCell-root:nth-of-type(1)": { width: "18%" },
+  "& .MuiTableCell-root:nth-of-type(2)": { width: "14%" },
+  "& .MuiTableCell-root:nth-of-type(3)": { width: "63%" },
+  "& .MuiTableCell-root:nth-of-type(4)": { width: "5%" },
   "& .MuiAutocomplete-root": { width: "100%", minWidth: 0 },
   "& .MuiAutocomplete-inputRoot": {
     minWidth: 0,
@@ -103,40 +91,34 @@ const statusMessageSx = {
   textAlign: "center",
 } satisfies SxProps<Theme>;
 
-type Props = {
+interface Props {
   hands: readonly HandHistory[];
   labelOptions: readonly HandLabelOption[];
   isLoading?: boolean;
   onSelectHand: (hand: HandHistory) => void;
-  onLabelsChanged: (handId: string, labels: HandLabelAssignment[]) => void;
-  onLabelSaveError: (message: string) => void;
-  onNoteChanged: (handId: string, note: string) => void;
-  onNoteSaveError: (message: string) => void;
-};
+  onFlaggedChanged: (handId: string, flagged: boolean) => void;
+  onFlagSaveError: (message: string) => void;
+}
 
 export const HandHistoryTable = (props: Props) => {
   return (
     <Paper component="section" aria-label="Hand histories" elevation={0} sx={handHistoryTableSx}>
-      {props.isLoading ? (
-        <Box role="status" sx={statusMessageSx}>
-          <CircularProgress aria-label="Loading hand histories" size={24} />
-        </Box>
-      ) : props.hands.length === 0 ? (
-        <Box role="status" sx={statusMessageSx}>
-          <Typography color="text.secondary" variant="body2">
-            no hands found
-          </Typography>
-        </Box>
+      {props.hands.length === 0 ? (
+        props.isLoading ? null : (
+          <Box role="status" sx={statusMessageSx}>
+            <Typography color="text.secondary" variant="body2">
+              no hands found
+            </Typography>
+          </Box>
+        )
       ) : (
         <Table size="small" aria-label="Hand histories" sx={handHistoryTableContentSx}>
           <TableHead>
             <TableRow>
               <TableCell>Hand ID</TableCell>
               <TableCell>Hole Cards</TableCell>
-              <TableCell>Flop</TableCell>
-              <TableCell>Turn</TableCell>
-              <TableCell>River</TableCell>
-              <TableCell>Notes</TableCell>
+              <TableCell>Labels</TableCell>
+              <TableCell>Flag</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -146,10 +128,8 @@ export const HandHistoryTable = (props: Props) => {
                 hand={hand}
                 labelOptions={props.labelOptions}
                 onSelect={props.onSelectHand}
-                onLabelsChanged={props.onLabelsChanged}
-                onLabelSaveError={props.onLabelSaveError}
-                onNoteChanged={props.onNoteChanged}
-                onNoteSaveError={props.onNoteSaveError}
+                onFlaggedChanged={props.onFlaggedChanged}
+                onFlagSaveError={props.onFlagSaveError}
               />
             ))}
           </TableBody>

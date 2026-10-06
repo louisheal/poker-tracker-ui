@@ -2,6 +2,8 @@ import { createRootRoute, createRoute, createRouter } from "@tanstack/react-rout
 import { RootLayout } from "./RootLayout";
 import { RangeTrackerView } from "../rangeTracker/RangeTrackerView";
 import { HandHistoryView } from "../handHistories/HandHistoryView";
+import { DashboardView } from "../dashboard/DashboardView";
+import { DiagnosticsView } from "../diagnostics/DiagnosticsView";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -19,7 +21,19 @@ const rangeTrackerRoute = createRoute({
   component: RangeTrackerView,
 });
 
-const routeTree = rootRoute.addChildren([handHistoriesRoute, rangeTrackerRoute]);
+const dashboardRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/dashboard",
+  component: DashboardView,
+});
+
+const diagnosticsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/diagnostics",
+  component: DiagnosticsView,
+});
+
+const routeTree = rootRoute.addChildren([handHistoriesRoute, rangeTrackerRoute, dashboardRoute, diagnosticsRoute]);
 
 export const router = createRouter({ routeTree });
 

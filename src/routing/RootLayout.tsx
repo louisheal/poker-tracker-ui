@@ -17,11 +17,9 @@ export const RootLayout = () => {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
-  const isRangeTracker = pathname === "/range-tracker";
-
   return (
     <Box sx={rootLayoutSx}>
-      <NavigationPanel isRangeTracker={isRangeTracker} />
+      <NavigationPanel pathname={pathname} />
       <Box sx={contentSx}>
         <Outlet />
       </Box>

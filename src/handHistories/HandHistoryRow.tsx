@@ -1,10 +1,9 @@
 import { Button, TableCell, TableRow } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { HandLabelAssignment, HandLabelOption } from "../api";
-import { handLabelStreets } from "../api";
-import type { HandHistory } from "./HandHistoryView";
-import { HandLabelCell } from "./HandLabelCell";
-import { HandNoteCell } from "./HandNoteCell";
+import type { HandLabelOption } from "../api";
+import type { HandHistory } from "./types";
+import { HandFlagCell } from "./HandFlagCell";
+import { HandLabelsCell } from "./HandLabelsCell";
 
 const handIdButtonSx = {
   justifyContent: "flex-start",
@@ -13,19 +12,15 @@ const handIdButtonSx = {
   textAlign: "left",
 } satisfies SxProps<Theme>;
 
-type Props = {
+interface Props {
   hand: HandHistory;
   labelOptions: readonly HandLabelOption[];
   onSelect: (hand: HandHistory) => void;
-  onLabelsChanged: (handId: string, labels: HandLabelAssignment[]) => void;
-  onLabelSaveError: (message: string) => void;
-  onNoteChanged: (handId: string, note: string) => void;
-  onNoteSaveError: (message: string) => void;
-};
+  onFlaggedChanged: (handId: string, flagged: boolean) => void;
+  onFlagSaveError: (message: string) => void;
+}
 
 export const HandHistoryRow = (props: Props) => {
-  const labelsKey = props.hand.labels.map((label) => `${label.street}:${label.label}`).join(",");
-
   return (
     <TableRow hover>
       <TableCell component="th" scope="row" data-label="Hand ID">
@@ -43,25 +38,15 @@ export const HandHistoryRow = (props: Props) => {
         {props.hand.holeCards.first.suit} {props.hand.holeCards.second.rank}
         {props.hand.holeCards.second.suit}
       </TableCell>
-      {handLabelStreets.map((street) => (
-        <TableCell key={street} data-label={street}>
-          <HandLabelCell
-            key={`${props.hand.handId}:${street}:${labelsKey}`}
-            hand={props.hand}
-            street={street}
-            labelOptions={props.labelOptions}
-            onLabelsChanged={props.onLabelsChanged}
-            onError={props.onLabelSaveError}
-          />
-        </TableCell>
-      ))}
-      <TableCell data-label="Notes">
-        <HandNoteCell
-          key={`${props.hand.handId}:${props.hand.note}`}
+      <TableCell data-label="Labels">
+        <HandLabelsCell labels={props.hand.labels} labelOptions={props.labelOptions} />
+      </TableCell>
+      <TableCell data-label="Flag">
+        <HandFlagCell
           handId={props.hand.handId}
-          note={props.hand.note}
-          onNoteChanged={props.onNoteChanged}
-          onError={props.onNoteSaveError}
+          flagged={props.hand.flagged}
+          onFlaggedChanged={props.onFlaggedChanged}
+          onError={props.onFlagSaveError}
         />
       </TableCell>
     </TableRow>
