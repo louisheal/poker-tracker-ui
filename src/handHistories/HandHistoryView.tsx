@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Box } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import { Header } from "../Header";
+import type { HandImportJobDto } from "../handImports/api";
 import { HandHistoryBrowser } from "./HandHistoryBrowser";
-import { UploadButton } from "./UploadButton";
 
 const handHistoryViewSx = {
   minHeight: "100vh",
@@ -24,12 +24,15 @@ const handHistoryContentSx = {
 
 export const HandHistoryView = () => {
   const [refreshVersion, setRefreshVersion] = useState(0);
+  const handleImportCompleted = (job: HandImportJobDto) => {
+    if (job.handsSaved > 0 || job.files.some((file) => file.status === "completed")) {
+      setRefreshVersion((version) => version + 1);
+    }
+  };
 
   return (
     <Box sx={handHistoryViewSx}>
-      <Header>
-        <UploadButton onUploaded={() => setRefreshVersion((version) => version + 1)} />
-      </Header>
+      <Header onHandImportCompleted={handleImportCompleted} />
       <Box component="main" sx={handHistoryContentSx}>
         <HandHistoryBrowser refreshVersion={refreshVersion} />
       </Box>

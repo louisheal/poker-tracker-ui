@@ -1,6 +1,8 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { ReactNode } from "react";
+import type { HandImportJobDto } from "./handImports/api";
+import { HandImportControl } from "./handImports/HandImportControl";
 
 const appBarSx = {
   bgcolor: "transparent",
@@ -18,9 +20,10 @@ const titleSx = {
   flexGrow: 1,
 } satisfies SxProps<Theme>;
 
-type Props = {
+interface Props {
   children?: ReactNode;
-};
+  onHandImportCompleted?: (job: HandImportJobDto) => void;
+}
 
 export const Header = (props: Props) => {
   return (
@@ -30,6 +33,7 @@ export const Header = (props: Props) => {
           Poker Tracker
         </Typography>
         {props.children}
+        <HandImportControl onJobCompleted={props.onHandImportCompleted} />
       </Toolbar>
     </AppBar>
   );
