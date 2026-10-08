@@ -1,4 +1,5 @@
 import HistoryIcon from "@mui/icons-material/History";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import InsightsIcon from "@mui/icons-material/Insights";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import SpaceDashboardIcon from "@mui/icons-material/SpaceDashboard";
@@ -56,6 +57,12 @@ export const NavigationPanel = (props: Props) => {
             label="Diagnostics"
             route="/diagnostics"
             selected={props.pathname === "/diagnostics"}
+          />
+          <NavigationItem
+            icon={<AssessmentIcon />}
+            label="Analysis"
+            route="/analysis"
+            selected={props.pathname === "/analysis"}
           />
         </List>
       </Box>

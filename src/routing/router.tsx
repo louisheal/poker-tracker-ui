@@ -4,6 +4,7 @@ import { RangeTrackerView } from "../rangeTracker/RangeTrackerView";
 import { HandHistoryView } from "../handHistories/HandHistoryView";
 import { DashboardView } from "../dashboard/DashboardView";
 import { DiagnosticsView } from "../diagnostics/DiagnosticsView";
+import { AnalysisView } from "../analysis/AnalysisView";
 
 const rootRoute = createRootRoute({
   component: RootLayout,
@@ -33,7 +34,19 @@ const diagnosticsRoute = createRoute({
   component: DiagnosticsView,
 });
 
-const routeTree = rootRoute.addChildren([handHistoriesRoute, rangeTrackerRoute, dashboardRoute, diagnosticsRoute]);
+const analysisRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/analysis",
+  component: AnalysisView,
+});
+
+const routeTree = rootRoute.addChildren([
+  handHistoriesRoute,
+  rangeTrackerRoute,
+  dashboardRoute,
+  diagnosticsRoute,
+  analysisRoute,
+]);
 
 export const router = createRouter({ routeTree });
 

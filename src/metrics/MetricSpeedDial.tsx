@@ -29,20 +29,23 @@ const pointOnDial = (fraction: number, distance: number) => {
 
 interface Props {
   label: string;
-  value: number;
+  value: number | null;
   min: number;
   max: number;
   decimals?: number;
   suffix?: string;
+  sampleCount?: number;
 }
 
 export const MetricSpeedDial = (props: Props) => {
-  const fraction = Math.min(1, Math.max(0, (props.value - props.min) / (props.max - props.min)));
+  const fraction =
+    props.value === null ? 0 : Math.min(1, Math.max(0, (props.value - props.min) / (props.max - props.min)));
   const valueEnd = pointOnDial(fraction, radius);
   const needleTip = pointOnDial(fraction, needleLength);
   const trackPath = `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 0 1 ${centerX + radius} ${centerY}`;
   const valuePath = `M ${centerX - radius} ${centerY} A ${radius} ${radius} 0 0 1 ${valueEnd.x} ${valueEnd.y}`;
-  const formattedValue = `${props.value.toFixed(props.decimals ?? 1)}${props.suffix ?? ""}`;
+  const formattedValue =
+    props.value === null ? "—" : `${props.value.toFixed(props.decimals ?? 1)}${props.suffix ?? ""}`;
 
   return (
     <Paper variant="outlined" sx={dialSx}>
@@ -58,16 +61,20 @@ export const MetricSpeedDial = (props: Props) => {
           strokeWidth={14}
           strokeLinecap="round"
         />
-        <path d={valuePath} fill="none" stroke="currentColor" strokeWidth={14} strokeLinecap="round" />
-        <line
-          x1={centerX}
-          y1={centerY}
-          x2={needleTip.x}
-          y2={needleTip.y}
-          stroke="currentColor"
-          strokeWidth={3}
-          strokeLinecap="round"
-        />
+        {props.value !== null && (
+          <path d={valuePath} fill="none" stroke="currentColor" strokeWidth={14} strokeLinecap="round" />
+        )}
+        {props.value !== null && (
+          <line
+            x1={centerX}
+            y1={centerY}
+            x2={needleTip.x}
+            y2={needleTip.y}
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+          />
+        )}
         <circle cx={centerX} cy={centerY} r={6} fill="currentColor" />
         <text
           x={centerX - radius}
@@ -93,6 +100,11 @@ export const MetricSpeedDial = (props: Props) => {
       <Typography variant="h5" sx={{ fontWeight: 600 }}>
         {formattedValue}
       </Typography>
+      {props.sampleCount !== undefined && (
+        <Typography variant="caption" color="text.secondary">
+          {props.sampleCount.toLocaleString()} samples
+        </Typography>
+      )}
     </Paper>
   );
 };
