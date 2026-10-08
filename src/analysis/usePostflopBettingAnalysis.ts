@@ -2,10 +2,15 @@ import { useEffect, useState } from "react";
 import { getPostflopBettingAnalysis } from "./api";
 import type {
   PostflopBettingAnalysisDto,
+  PostflopActionSequence,
+  PostflopAnalysisTab,
   PostflopFlopHighCard,
+  PostflopFlopRankTexture,
   PostflopFlopTexture,
   PostflopPotType,
+  PostflopRunout,
   PostflopSeatPosition,
+  RiverBetSizeCategory,
 } from "./dto";
 
 type AnalysisState =
@@ -20,6 +25,15 @@ export const usePostflopBettingAnalysis = (
   potTypes: readonly PostflopPotType[],
   flopHighCard: PostflopFlopHighCard | null,
   flopTextures: readonly PostflopFlopTexture[],
+  activeTab: PostflopAnalysisTab,
+  flopActionSequences: readonly PostflopActionSequence[],
+  flopRankTextures: readonly PostflopFlopRankTexture[],
+  turnActionSequences: readonly PostflopActionSequence[],
+  turnRunouts: readonly PostflopRunout[],
+  riverRunouts: readonly PostflopRunout[],
+  riverBetSizeCategory: RiverBetSizeCategory | null,
+  minRiverBetToPotPercent: string,
+  maxRiverBetToPotPercent: string,
 ) => {
   const [state, setState] = useState<AnalysisState>({ status: "loading" });
 
@@ -27,12 +41,23 @@ export const usePostflopBettingAnalysis = (
     const controller = new AbortController();
 
     void getPostflopBettingAnalysis(
-      pfrInPosition,
-      ipPosition,
-      oopPosition,
-      potTypes,
-      flopHighCard,
-      flopTextures,
+      {
+        activeTab,
+        pfrInPosition,
+        ipPosition,
+        oopPosition,
+        potTypes,
+        flopHighCard,
+        flopTextures,
+        flopActionSequences,
+        flopRankTextures,
+        turnActionSequences,
+        turnRunouts,
+        riverRunouts,
+        riverBetSizeCategory,
+        minRiverBetToPotPercent,
+        maxRiverBetToPotPercent,
+      },
       controller.signal,
     )
       .then((analysis) => {
@@ -48,7 +73,23 @@ export const usePostflopBettingAnalysis = (
       });
 
     return () => controller.abort();
-  }, [pfrInPosition, ipPosition, oopPosition, potTypes, flopHighCard, flopTextures]);
+  }, [
+    pfrInPosition,
+    ipPosition,
+    oopPosition,
+    potTypes,
+    flopHighCard,
+    flopTextures,
+    activeTab,
+    flopActionSequences,
+    flopRankTextures,
+    turnActionSequences,
+    turnRunouts,
+    riverRunouts,
+    riverBetSizeCategory,
+    minRiverBetToPotPercent,
+    maxRiverBetToPotPercent,
+  ]);
 
   return state;
 };

@@ -10,7 +10,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { PostflopFlopHighCard, PostflopFlopTexture, PostflopPotType, PostflopSeatPosition } from "./dto";
+import type { PostflopPotType, PostflopSeatPosition } from "./dto";
 
 const filtersSx = {
   display: "flex",
@@ -40,41 +40,9 @@ const potTypeOptions = [
   { value: "FourBetPot", label: "4Bet" },
 ] satisfies { value: PostflopPotType; label: string }[];
 
-const flopHighCardOptions = [
-  { value: "", label: "All" },
-  { value: "Ace", label: "A" },
-  { value: "King", label: "K" },
-  { value: "Queen", label: "Q" },
-  { value: "Jack", label: "J" },
-  { value: "Ten", label: "T" },
-  { value: "Nine", label: "9" },
-  { value: "Eight", label: "8" },
-  { value: "Seven", label: "7" },
-  { value: "Six", label: "6" },
-  { value: "Five", label: "5" },
-  { value: "Four", label: "4" },
-  { value: "Three", label: "3" },
-  { value: "Two", label: "2" },
-] satisfies { value: PostflopFlopHighCard | ""; label: string }[];
-
-const flopTextureOptions = [
-  { value: "Monotone", label: "Monotone" },
-  { value: "TwoTone", label: "TwoTone" },
-  { value: "Rainbow", label: "Rainbow" },
-] satisfies { value: PostflopFlopTexture; label: string }[];
-
-type FlopTextureSelectionValue = PostflopFlopTexture | "All";
-
 const readPotTypeSelection = (value: unknown): PostflopPotType[] =>
   Array.isArray(value)
     ? potTypeOptions
-        .filter((option) => value.some((selected) => selected === option.value))
-        .map((option) => option.value)
-    : [];
-
-const readFlopTextureSelection = (value: unknown): PostflopFlopTexture[] =>
-  Array.isArray(value) && !value.includes("All")
-    ? flopTextureOptions
         .filter((option) => value.some((selected) => selected === option.value))
         .map((option) => option.value)
     : [];
@@ -84,14 +52,10 @@ interface Props {
   ipPosition: PostflopSeatPosition | null;
   oopPosition: PostflopSeatPosition | null;
   potTypes: PostflopPotType[];
-  flopHighCard: PostflopFlopHighCard | null;
-  flopTextures: PostflopFlopTexture[];
   onPfrInPositionChange: (value: boolean | null) => void;
   onIpPositionChange: (value: PostflopSeatPosition | null) => void;
   onOopPositionChange: (value: PostflopSeatPosition | null) => void;
   onPotTypesChange: (value: PostflopPotType[]) => void;
-  onFlopHighCardChange: (value: PostflopFlopHighCard | null) => void;
-  onFlopTexturesChange: (value: PostflopFlopTexture[]) => void;
 }
 
 export const PostflopBettingFilters = (props: Props) => (
@@ -161,50 +125,6 @@ export const PostflopBettingFilters = (props: Props) => (
           <MenuItem key={option.value} value={option.value}>
             <Checkbox checked={props.potTypes.includes(option.value)} />
             <ListItemText primary={option.label} />
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-    <FormControl size="small" sx={{ minWidth: 170 }}>
-      <InputLabel id="postflop-flop-textures-label">Flop texture</InputLabel>
-      <Select<FlopTextureSelectionValue[]>
-        labelId="postflop-flop-textures-label"
-        multiple
-        value={props.flopTextures}
-        label="Flop texture"
-        renderValue={(selected) =>
-          selected.length === 0 || selected.includes("All")
-            ? "All"
-            : flopTextureOptions
-                .filter((option) => selected.includes(option.value))
-                .map((option) => option.label)
-                .join(", ")
-        }
-        onChange={(event) => props.onFlopTexturesChange(readFlopTextureSelection(event.target.value))}
-      >
-        <MenuItem value="All">
-          <Checkbox checked={props.flopTextures.length === 0} />
-          <ListItemText primary="All" />
-        </MenuItem>
-        {flopTextureOptions.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            <Checkbox checked={props.flopTextures.includes(option.value)} />
-            <ListItemText primary={option.label} />
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
-    <FormControl size="small" sx={{ minWidth: 150 }}>
-      <InputLabel id="postflop-flop-high-card-label">Flop high card</InputLabel>
-      <Select<PostflopFlopHighCard | "">
-        labelId="postflop-flop-high-card-label"
-        value={props.flopHighCard ?? ""}
-        label="Flop high card"
-        onChange={(event) => props.onFlopHighCardChange(event.target.value === "" ? null : event.target.value)}
-      >
-        {flopHighCardOptions.map((option) => (
-          <MenuItem key={option.value || "All"} value={option.value}>
-            {option.label}
           </MenuItem>
         ))}
       </Select>

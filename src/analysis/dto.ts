@@ -23,6 +23,18 @@ export type PostflopFlopHighCard =
 
 export type PostflopSeatPosition = "LJ" | "HJ" | "CO" | "BTN" | "SB" | "BB";
 
+export type PostflopAnalysisTab = "Flop" | "Turn" | "River";
+
+export type PostflopActionSequence = "XX" | "XBC" | "XBRC" | "BC";
+
+export type PostflopFlopRankTexture = "Trips" | "Paired" | "Unpaired";
+
+export type PostflopRunout = "Overcard" | "FlushCompleting" | "Paired" | "Other";
+
+export type RiverAggressionType = "Bet" | "Raise";
+
+export type RiverBetSizeCategory = "Small" | "Medium" | "Large" | "Overbet";
+
 export interface PostflopResponseDto {
   responseType: string;
   count: number;
@@ -41,6 +53,28 @@ export interface PostflopBettingStatDto {
   responseBreakdown: PostflopResponseDto[];
 }
 
+export interface RiverBettingStatDto {
+  aggressionType: RiverAggressionType;
+  opportunityCount: number;
+  heroOpportunityCount: number;
+  showdownCount: number;
+  villainWinCount: number;
+  opponentWinCount: number;
+  chopCount: number;
+  heroCallCount: number;
+  heroCallVillainWinCount: number;
+  heroCallHeroWinCount: number;
+  heroCallChopCount: number;
+}
+
+export interface RiverBetResponseStatDto {
+  line: "BF" | "XBF";
+  opportunityCount: number;
+  villainFoldCount: number;
+}
+
 export interface PostflopBettingAnalysisDto {
   stats: PostflopBettingStatDto[];
+  riverStats: RiverBettingStatDto[];
+  riverBetResponseStats: RiverBetResponseStatDto[];
 }
