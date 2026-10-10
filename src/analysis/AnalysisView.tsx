@@ -5,12 +5,15 @@ import { Header } from "../Header";
 import { MetricSpeedDial } from "../metrics/MetricSpeedDial";
 import { AnalysisContextFilters } from "./AnalysisContextFilters";
 import { getFlopMetrics } from "./flopMetrics";
+import { PostflopBetResponseSection } from "./PostflopBetResponseSection";
 import { PostflopBettingFilters } from "./PostflopBettingFilters";
 import { RiverBettingMetrics } from "./RiverBettingMetrics";
+import { RiverBetResponseCharts } from "./RiverBetResponseCharts";
 import type { PostflopAnalysisTab } from "./dto";
 import { getDelayedContinuationBetMetric } from "./turnMetrics";
 import { usePostflopBettingFilters } from "./usePostflopBettingFilters";
 import { usePostflopBettingAnalysis } from "./usePostflopBettingAnalysis";
+import { usePostflopBetResponseBuckets } from "./usePostflopBetResponseBuckets";
 
 const analysisViewSx = {
   minHeight: "100vh",
@@ -67,6 +70,18 @@ export const AnalysisView = () => {
     filters.minRiverBetToPotPercent,
     filters.maxRiverBetToPotPercent,
   );
+  const betResponseBucketsState = usePostflopBetResponseBuckets(activeTab === "River" ? null : activeTab, {
+    pfrInPosition: filters.pfrInPosition,
+    ipPosition: filters.ipPosition,
+    oopPosition: filters.oopPosition,
+    potTypes: filters.potTypes,
+    flopHighCard: filters.flopHighCard,
+    flopTextures: filters.flopTextures,
+    flopActionSequences: filters.flopActionSequences,
+    flopRankTextures: filters.flopRankTextures,
+    turnActionSequences: filters.turnActionSequences,
+    turnRunouts: filters.turnRunouts,
+  });
   const flopMetrics = analysisState.status === "loaded" ? getFlopMetrics(analysisState.analysis.stats) : null;
   const turnMetric =
     analysisState.status === "loaded" ? getDelayedContinuationBetMetric(analysisState.analysis.stats) : null;
@@ -132,11 +147,11 @@ export const AnalysisView = () => {
           hidden={activeTab !== "Flop"}
           sx={{ display: activeTab === "Flop" ? "flex" : "none", flexDirection: "column", gap: 2 }}
         >
+          <Typography component="h3" variant="h6" sx={headingSx}>
+            Flop
+          </Typography>
           {flopMetrics !== null && (
             <>
-              <Typography component="h3" variant="h6" sx={headingSx}>
-                Flop
-              </Typography>
               {flopMetrics.villainCBet.sampleCount === 0 &&
                 flopMetrics.foldToCBet.sampleCount === 0 &&
                 flopMetrics.villainDonk.sampleCount === 0 &&
@@ -179,6 +194,7 @@ export const AnalysisView = () => {
               </Box>
             </>
           )}
+          <PostflopBetResponseSection street="Flop" state={betResponseBucketsState} />
         </Box>
         <Box
           component="section"
@@ -188,11 +204,11 @@ export const AnalysisView = () => {
           hidden={activeTab !== "Turn"}
           sx={{ display: activeTab === "Turn" ? "flex" : "none", flexDirection: "column", gap: 2 }}
         >
+          <Typography component="h3" variant="h6" sx={headingSx}>
+            Turn
+          </Typography>
           {turnMetric !== null && (
             <>
-              <Typography component="h3" variant="h6" sx={headingSx}>
-                Turn
-              </Typography>
               {turnMetric.sampleCount === 0 ? (
                 <Typography color="text.secondary">No delayed continuation bet opportunities are available.</Typography>
               ) : (
@@ -209,6 +225,7 @@ export const AnalysisView = () => {
               )}
             </>
           )}
+          <PostflopBetResponseSection street="Turn" state={betResponseBucketsState} />
         </Box>
         <Box
           component="section"
@@ -224,14 +241,12 @@ export const AnalysisView = () => {
                 River
               </Typography>
               {analysisState.analysis.riverStats.length === 0 &&
-              analysisState.analysis.riverBetResponseStats.length === 0 ? (
-                <Typography color="text.secondary">No river aggression observations are available.</Typography>
-              ) : (
-                <RiverBettingMetrics
-                  stats={analysisState.analysis.riverStats}
-                  betResponseStats={analysisState.analysis.riverBetResponseStats}
-                />
-              )}
+                analysisState.analysis.riverBetResponseStats.length === 0 &&
+                analysisState.analysis.riverBetResponseBuckets.length === 0 && (
+                  <Typography color="text.secondary">No river aggression observations are available.</Typography>
+                )}
+              <RiverBettingMetrics stats={analysisState.analysis.riverStats} />
+              <RiverBetResponseCharts buckets={analysisState.analysis.riverBetResponseBuckets} street="River" />
             </>
           )}
         </Box>

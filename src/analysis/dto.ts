@@ -25,6 +25,8 @@ export type PostflopSeatPosition = "LJ" | "HJ" | "CO" | "BTN" | "SB" | "BB";
 
 export type PostflopAnalysisTab = "Flop" | "Turn" | "River";
 
+export type PostflopBetResponseStreet = "Flop" | "Turn" | "River";
+
 export type PostflopActionSequence = "XX" | "XBC" | "XBRC" | "BC";
 
 export type PostflopFlopRankTexture = "Trips" | "Paired" | "Unpaired";
@@ -73,8 +75,18 @@ export interface RiverBetResponseStatDto {
   villainFoldCount: number;
 }
 
+export interface PostflopBetResponseBucketDto {
+  line: "BF" | "XBF";
+  betSizeThresholdPercent: number;
+  opportunityCount: number;
+  villainFoldCount: number;
+}
+
+export type RiverBetResponseBucketDto = PostflopBetResponseBucketDto;
+
 export interface PostflopBettingAnalysisDto {
   stats: PostflopBettingStatDto[];
   riverStats: RiverBettingStatDto[];
   riverBetResponseStats: RiverBetResponseStatDto[];
+  riverBetResponseBuckets: RiverBetResponseBucketDto[];
 }

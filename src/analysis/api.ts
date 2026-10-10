@@ -11,12 +11,31 @@ import type {
   PostflopPotType,
   PostflopRunout,
   PostflopSeatPosition,
+  PostflopBetResponseBucketDto,
+  PostflopBetResponseStreet,
   RiverBetSizeCategory,
   RiverBettingStatDto,
   RiverBetResponseStatDto,
 } from "./dto";
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "";
+
+type PostflopBettingAnalysisPayload = Omit<PostflopBettingAnalysisDto, "riverBetResponseBuckets"> & {
+  riverBetResponseBuckets?: PostflopBetResponseBucketDto[];
+};
+
+export interface PostflopBetResponseBucketFilters {
+  pfrInPosition: boolean | null;
+  ipPosition: PostflopSeatPosition | null;
+  oopPosition: PostflopSeatPosition | null;
+  potTypes: readonly PostflopPotType[];
+  flopHighCard: PostflopFlopHighCard | null;
+  flopTextures: readonly PostflopFlopTexture[];
+  flopActionSequences: readonly PostflopActionSequence[];
+  flopRankTextures: readonly PostflopFlopRankTexture[];
+  turnActionSequences: readonly PostflopActionSequence[];
+  turnRunouts: readonly PostflopRunout[];
+}
 
 const isFiniteNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
 
@@ -68,6 +87,30 @@ const isRiverBetResponseStatDto = (value: unknown): value is RiverBetResponseSta
   );
 };
 
+const isPostflopBetResponseBucketDto = (value: unknown): value is PostflopBetResponseBucketDto => {
+  if (typeof value !== "object" || value === null) return false;
+
+  return (
+    "line" in value &&
+    (value.line === "BF" || value.line === "XBF") &&
+    "betSizeThresholdPercent" in value &&
+    isFiniteNumber(value.betSizeThresholdPercent) &&
+    Number.isInteger(value.betSizeThresholdPercent) &&
+    value.betSizeThresholdPercent >= 10 &&
+    value.betSizeThresholdPercent <= 300 &&
+    value.betSizeThresholdPercent % 10 === 0 &&
+    "opportunityCount" in value &&
+    isFiniteNumber(value.opportunityCount) &&
+    Number.isInteger(value.opportunityCount) &&
+    value.opportunityCount >= 0 &&
+    "villainFoldCount" in value &&
+    isFiniteNumber(value.villainFoldCount) &&
+    Number.isInteger(value.villainFoldCount) &&
+    value.villainFoldCount >= 0 &&
+    value.villainFoldCount <= value.opportunityCount
+  );
+};
+
 const isPostflopBettingStatDto = (value: unknown): value is PostflopBettingStatDto => {
   if (typeof value !== "object" || value === null) return false;
 
@@ -104,7 +147,7 @@ const isPostflopBettingStatDto = (value: unknown): value is PostflopBettingStatD
   );
 };
 
-const isPostflopBettingAnalysisDto = (value: unknown): value is PostflopBettingAnalysisDto => {
+const isPostflopBettingAnalysisDto = (value: unknown): value is PostflopBettingAnalysisPayload => {
   if (
     typeof value !== "object" ||
     value === null ||
@@ -114,6 +157,13 @@ const isPostflopBettingAnalysisDto = (value: unknown): value is PostflopBettingA
     !Array.isArray(value.riverStats) ||
     !("riverBetResponseStats" in value) ||
     !Array.isArray(value.riverBetResponseStats)
+  ) {
+    return false;
+  }
+  if (
+    "riverBetResponseBuckets" in value &&
+    (!Array.isArray(value.riverBetResponseBuckets) ||
+      !value.riverBetResponseBuckets.every(isPostflopBetResponseBucketDto))
   ) {
     return false;
   }
@@ -146,6 +196,70 @@ const appendValues = <T extends string>(query: URLSearchParams, key: string, val
   for (const value of values) {
     query.append(key, value);
   }
+};
+
+const buildPostflopBetResponseBucketQuery = (
+  street: PostflopBetResponseStreet,
+  filters: PostflopBetResponseBucketFilters,
+) => {
+  const query = new URLSearchParams();
+  if (filters.pfrInPosition !== null) {
+    query.set("pfrInPosition", String(filters.pfrInPosition));
+  }
+  if (filters.ipPosition !== null) {
+    query.set("ipPosition", filters.ipPosition);
+  }
+  if (filters.oopPosition !== null) {
+    query.set("oopPosition", filters.oopPosition);
+  }
+  appendValues(query, "potTypes", filters.potTypes);
+
+  if (filters.flopHighCard !== null) {
+    query.set("flopHighCard", filters.flopHighCard);
+  }
+  appendValues(query, "flopTextures", filters.flopTextures);
+  appendValues(query, "flopActionSequences", filters.flopActionSequences);
+  appendValues(query, "flopRankTextures", filters.flopRankTextures);
+
+  if (street === "Turn") {
+    appendValues(query, "turnActionSequences", filters.turnActionSequences);
+    appendValues(query, "turnRunouts", filters.turnRunouts);
+  }
+
+  return query;
+};
+
+const getPostflopBettingUrl = (path: string, query: URLSearchParams) => {
+  const queryString = query.toString();
+  return `${apiBaseUrl}/api/massdata/${path}${queryString.length > 0 ? `?${queryString}` : ""}`;
+};
+
+export const getPostflopBetResponseBuckets = async (
+  street: Exclude<PostflopBetResponseStreet, "River">,
+  filters: PostflopBetResponseBucketFilters,
+  signal?: AbortSignal,
+): Promise<PostflopBetResponseBucketDto[]> => {
+  const query = buildPostflopBetResponseBucketQuery(street, filters);
+  const response = await fetch(
+    getPostflopBettingUrl(`postflop-betting/${street.toLowerCase()}-response-buckets`, query),
+    { signal },
+  );
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}`);
+  }
+
+  const payload: unknown = await response.json();
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !("buckets" in payload) ||
+    !Array.isArray(payload.buckets) ||
+    !payload.buckets.every(isPostflopBetResponseBucketDto)
+  ) {
+    throw new Error(`Invalid ${street.toLowerCase()} response buckets response.`);
+  }
+
+  return payload.buckets;
 };
 
 export const getPostflopBettingAnalysis = async (
@@ -202,8 +316,7 @@ export const getPostflopBettingAnalysis = async (
     }
   }
 
-  const queryString = query.toString();
-  const url = `${apiBaseUrl}/api/massdata/postflop-betting${queryString.length > 0 ? `?${queryString}` : ""}`;
+  const url = getPostflopBettingUrl("postflop-betting", query);
   const response = await fetch(url, { signal });
   if (!response.ok) {
     throw new Error(`Response status: ${response.status}`);
@@ -214,5 +327,5 @@ export const getPostflopBettingAnalysis = async (
     throw new Error("Invalid postflop analysis response.");
   }
 
-  return payload;
+  return { ...payload, riverBetResponseBuckets: payload.riverBetResponseBuckets ?? [] };
 };
