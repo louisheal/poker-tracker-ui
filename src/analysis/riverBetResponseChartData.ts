@@ -2,6 +2,7 @@ import type { PostflopBetResponseBucketDto } from "./dto";
 
 export interface PostflopBetResponseChartPoint {
   betSizeThresholdPercent: number;
+  opportunityCount: number;
   foldRatePercent: number | null;
   breakevenPercent: number;
 }
@@ -18,6 +19,7 @@ export const getPostflopBetResponseChartData = (
 
     return {
       betSizeThresholdPercent: thresholdPercent,
+      opportunityCount: bucket?.opportunityCount ?? 0,
       foldRatePercent:
         bucket === undefined || bucket.opportunityCount === 0
           ? null
