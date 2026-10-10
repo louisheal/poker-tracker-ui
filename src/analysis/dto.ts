@@ -69,24 +69,9 @@ export interface RiverBettingStatDto {
   heroCallChopCount: number;
 }
 
-export interface RiverBetResponseStatDto {
-  line: "BF" | "XBF";
-  opportunityCount: number;
-  villainFoldCount: number;
-}
-
 export interface PostflopBetResponseBucketDto {
   line: "BF" | "XBF";
   betSizeThresholdPercent: number;
   opportunityCount: number;
   villainFoldCount: number;
-}
-
-export type RiverBetResponseBucketDto = PostflopBetResponseBucketDto;
-
-export interface PostflopBettingAnalysisDto {
-  stats: PostflopBettingStatDto[];
-  riverStats: RiverBettingStatDto[];
-  riverBetResponseStats: RiverBetResponseStatDto[];
-  riverBetResponseBuckets: RiverBetResponseBucketDto[];
 }

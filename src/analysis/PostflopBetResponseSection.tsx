@@ -11,6 +11,12 @@ const sectionSx = {
   minWidth: 0,
 } satisfies SxProps<Theme>;
 
+const loadingSx = {
+  display: "flex",
+  justifyContent: "center",
+  py: 6,
+} satisfies SxProps<Theme>;
+
 interface Props {
   street: PostflopBetResponseStreet;
   state: PostflopBetResponseBucketsState;
@@ -19,30 +25,27 @@ interface Props {
 export const PostflopBetResponseSection = (props: Props) => {
   if (props.state.status === "idle") return null;
 
-  if (props.state.status === "loading") {
-    return (
-      <Box role="status" aria-label={`Loading ${props.street.toLowerCase()} response charts`} sx={sectionSx}>
-        <CircularProgress size={28} />
-      </Box>
-    );
-  }
-
-  if (props.state.status === "error") {
-    return (
-      <Alert severity="error" sx={sectionSx}>
-        {props.state.message}
-      </Alert>
-    );
-  }
-
   return (
     <Box component="section" sx={sectionSx}>
-      {props.state.buckets.every((bucket) => bucket.opportunityCount === 0) && (
-        <Typography role="status" color="text.secondary">
-          No {props.street.toLowerCase()} response observations are available.
-        </Typography>
+      <Typography component="h3" variant="h6" sx={{ fontWeight: 600 }}>
+        Fold Equity
+      </Typography>
+      {props.state.status === "loading" && (
+        <Box role="status" aria-label={`Loading ${props.street.toLowerCase()} response charts`} sx={loadingSx}>
+          <CircularProgress size={28} />
+        </Box>
       )}
-      <RiverBetResponseCharts buckets={props.state.buckets} street={props.street} />
+      {props.state.status === "error" && <Alert severity="error">{props.state.message}</Alert>}
+      {props.state.status === "loaded" && (
+        <>
+          {props.state.buckets.every((bucket) => bucket.opportunityCount === 0) && (
+            <Typography role="status" color="text.secondary">
+              No {props.street.toLowerCase()} response observations are available.
+            </Typography>
+          )}
+          <RiverBetResponseCharts buckets={props.state.buckets} street={props.street} />
+        </>
+      )}
     </Box>
   );
 };

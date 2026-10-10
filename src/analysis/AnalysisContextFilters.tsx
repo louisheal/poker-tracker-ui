@@ -38,8 +38,6 @@ interface Props {
   turnRunouts: PostflopRunout[];
   riverRunouts: PostflopRunout[];
   riverBetSizeCategory: RiverBetSizeCategory | null;
-  minRiverBetToPotPercent: string;
-  maxRiverBetToPotPercent: string;
   onFlopHighCardChange: (value: PostflopFlopHighCard | null) => void;
   onFlopTexturesChange: (values: PostflopFlopTexture[]) => void;
   onFlopActionSequencesChange: (values: PostflopActionSequence[]) => void;
@@ -48,8 +46,6 @@ interface Props {
   onTurnRunoutsChange: (values: PostflopRunout[]) => void;
   onRiverRunoutsChange: (values: PostflopRunout[]) => void;
   onRiverBetSizeCategoryChange: (value: RiverBetSizeCategory | null) => void;
-  onMinRiverBetToPotPercentChange: (value: string) => void;
-  onMaxRiverBetToPotPercentChange: (value: string) => void;
 }
 
 export const AnalysisContextFilters = (props: Props) => (
@@ -79,12 +75,8 @@ export const AnalysisContextFilters = (props: Props) => (
         <RiverFilterSet
           runouts={props.riverRunouts}
           betSizeCategory={props.riverBetSizeCategory}
-          minBetToPotPercent={props.minRiverBetToPotPercent}
-          maxBetToPotPercent={props.maxRiverBetToPotPercent}
           onRunoutsChange={props.onRiverRunoutsChange}
           onBetSizeCategoryChange={props.onRiverBetSizeCategoryChange}
-          onMinBetToPotPercentChange={props.onMinRiverBetToPotPercentChange}
-          onMaxBetToPotPercentChange={props.onMaxRiverBetToPotPercentChange}
         />
       </>
     )}

@@ -1,14 +1,4 @@
-import {
-  Box,
-  Checkbox,
-  FormControl,
-  InputLabel,
-  ListItemText,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Typography } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { PostflopRunout, RiverBetSizeCategory } from "./dto";
 
@@ -42,12 +32,8 @@ const readRunoutSelection = (value: unknown): PostflopRunout[] =>
 interface Props {
   runouts: PostflopRunout[];
   betSizeCategory: RiverBetSizeCategory | null;
-  minBetToPotPercent: string;
-  maxBetToPotPercent: string;
   onRunoutsChange: (values: PostflopRunout[]) => void;
   onBetSizeCategoryChange: (value: RiverBetSizeCategory | null) => void;
-  onMinBetToPotPercentChange: (value: string) => void;
-  onMaxBetToPotPercentChange: (value: string) => void;
 }
 
 export const RiverFilterSet = (props: Props) => (
@@ -95,24 +81,6 @@ export const RiverFilterSet = (props: Props) => (
           ))}
         </Select>
       </FormControl>
-      <TextField
-        label="Min bet to pot (%)"
-        type="number"
-        size="small"
-        value={props.minBetToPotPercent}
-        onChange={(event) => props.onMinBetToPotPercentChange(event.target.value)}
-        slotProps={{ htmlInput: { min: 0, step: "any" } }}
-        sx={{ width: 170 }}
-      />
-      <TextField
-        label="Max bet to pot (%)"
-        type="number"
-        size="small"
-        value={props.maxBetToPotPercent}
-        onChange={(event) => props.onMaxBetToPotPercentChange(event.target.value)}
-        slotProps={{ htmlInput: { min: 0, step: "any" } }}
-        sx={{ width: 170 }}
-      />
     </Box>
   </Box>
 );

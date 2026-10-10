@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { PostflopBetResponseBucketDto, PostflopBetResponseStreet } from "./dto";
 import { RiverBetResponseChart } from "./RiverBetResponseChart";
@@ -15,13 +15,8 @@ interface Props {
 }
 
 export const RiverBetResponseCharts = (props: Props) => (
-  <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-    <Typography component="h4" variant="subtitle1" sx={{ fontWeight: 600 }}>
-      {props.street} bet response fold rate
-    </Typography>
-    <Box sx={chartsGridSx}>
-      <RiverBetResponseChart buckets={props.buckets} line="BF" street={props.street} />
-      <RiverBetResponseChart buckets={props.buckets} line="XBF" street={props.street} />
-    </Box>
+  <Box sx={chartsGridSx}>
+    <RiverBetResponseChart buckets={props.buckets} line="BF" street={props.street} />
+    <RiverBetResponseChart buckets={props.buckets} line="XBF" street={props.street} />
   </Box>
 );

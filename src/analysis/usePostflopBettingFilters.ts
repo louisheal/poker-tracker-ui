@@ -23,8 +23,6 @@ export const usePostflopBettingFilters = () => {
   const [turnRunouts, setTurnRunouts] = useState<PostflopRunout[]>([]);
   const [riverRunouts, setRiverRunouts] = useState<PostflopRunout[]>([]);
   const [riverBetSizeCategory, setRiverBetSizeCategory] = useState<RiverBetSizeCategory | null>(null);
-  const [minRiverBetToPotPercent, setMinRiverBetToPotPercent] = useState("");
-  const [maxRiverBetToPotPercent, setMaxRiverBetToPotPercent] = useState("");
 
   const selectPfrPosition = useCallback((value: boolean | null) => setPfrInPosition(value), []);
   const selectIpPosition = useCallback((value: PostflopSeatPosition | null) => setIpPosition(value), []);
@@ -41,8 +39,6 @@ export const usePostflopBettingFilters = () => {
     (value: RiverBetSizeCategory | null) => setRiverBetSizeCategory(value),
     [],
   );
-  const selectMinRiverBetToPotPercent = useCallback((value: string) => setMinRiverBetToPotPercent(value), []);
-  const selectMaxRiverBetToPotPercent = useCallback((value: string) => setMaxRiverBetToPotPercent(value), []);
 
   return {
     pfrInPosition,
@@ -57,8 +53,6 @@ export const usePostflopBettingFilters = () => {
     turnRunouts,
     riverRunouts,
     riverBetSizeCategory,
-    minRiverBetToPotPercent,
-    maxRiverBetToPotPercent,
     selectPfrPosition,
     selectIpPosition,
     selectOopPosition,
@@ -71,7 +65,5 @@ export const usePostflopBettingFilters = () => {
     selectTurnRunouts,
     selectRiverRunouts,
     selectRiverBetSizeCategory,
-    selectMinRiverBetToPotPercent,
-    selectMaxRiverBetToPotPercent,
   };
 };

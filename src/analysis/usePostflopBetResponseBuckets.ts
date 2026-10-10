@@ -9,12 +9,12 @@ type RequestState = { status: "loading" } | { status: "error"; message: string }
 export type PostflopBetResponseBucketsState = { status: "idle" } | RequestState | LoadedState;
 
 type StoredState = {
-  street: Exclude<PostflopBetResponseStreet, "River">;
+  street: PostflopBetResponseStreet;
   state: RequestState | LoadedState;
 };
 
 export const usePostflopBetResponseBuckets = (
-  street: Exclude<PostflopBetResponseStreet, "River"> | null,
+  street: PostflopBetResponseStreet | null,
   filters: PostflopBetResponseBucketFilters,
 ): PostflopBetResponseBucketsState => {
   const {
@@ -28,6 +28,8 @@ export const usePostflopBetResponseBuckets = (
     flopRankTextures,
     turnActionSequences,
     turnRunouts,
+    riverRunouts,
+    riverBetSizeCategory,
   } = filters;
   const [storedState, setStoredState] = useState<StoredState>(() => ({
     street: street ?? "Flop",
@@ -51,6 +53,8 @@ export const usePostflopBetResponseBuckets = (
         flopRankTextures,
         turnActionSequences,
         turnRunouts,
+        riverRunouts,
+        riverBetSizeCategory,
       },
       controller.signal,
     )
@@ -84,6 +88,8 @@ export const usePostflopBetResponseBuckets = (
     flopRankTextures,
     turnActionSequences,
     turnRunouts,
+    riverRunouts,
+    riverBetSizeCategory,
   ]);
 
   if (street === null) return { status: "idle" };
