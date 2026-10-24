@@ -18,16 +18,36 @@ const chartColors = {
 };
 
 const chartSeries = [
-  { key: "netWinningsBB", label: "Net winnings", color: chartColors.net },
+  { key: "netWinningsBB", label: "Net winnings", color: chartColors.net, visible: false },
   {
     key: "withShowdownWinningsBB",
     label: "With showdown",
     color: chartColors.showdown,
+    visible: false,
   },
   {
     key: "withoutShowdownWinningsBB",
     label: "Without showdown",
     color: chartColors.nonShowdown,
+    visible: false,
+  },
+  {
+    key: "netWinningsBBMovingAverage",
+    label: "Net winnings (10-point moving average)",
+    color: chartColors.net,
+    visible: true,
+  },
+  {
+    key: "withShowdownWinningsBBMovingAverage",
+    label: "With showdown (10-point moving average)",
+    color: chartColors.showdown,
+    visible: true,
+  },
+  {
+    key: "withoutShowdownWinningsBBMovingAverage",
+    label: "Without showdown (10-point moving average)",
+    color: chartColors.nonShowdown,
+    visible: true,
   },
 ] as const;
 
@@ -38,13 +58,14 @@ interface Props {
 }
 
 export const DailyWinningsChart = (props: Props) => {
+  const visibleSeries = chartSeries.filter((series) => series.visible);
   const width = 960;
   const height = 400;
   const plotLeft = 68;
   const plotRight = 940;
   const plotTop = 24;
   const plotBottom = 344;
-  const allValues = props.points.flatMap((point) => chartSeries.map((series) => point[series.key]));
+  const allValues = props.points.flatMap((point) => visibleSeries.map((series) => point[series.key]));
   let minimum = Math.min(0, ...allValues);
   let maximum = Math.max(0, ...allValues);
   const valueRange = maximum - minimum || 1;
@@ -68,12 +89,12 @@ export const DailyWinningsChart = (props: Props) => {
 
   return (
     <Paper component="section" elevation={0} sx={chartFrameSx}>
-      <DailyWinningsChartLegend series={chartSeries} />
+      <DailyWinningsChartLegend series={visibleSeries} />
       <Box sx={{ width: "100%", overflow: "hidden" }}>
         <svg
           viewBox={`0 0 ${width} ${height}`}
           role="img"
-          aria-label="Cumulative winnings in big blinds by number of hands"
+          aria-label="10-point moving average of cumulative winnings in big blinds by number of hands"
           style={{ display: "block", width: "100%", height: "auto" }}
         >
           {yTicks.map((tick) => (
@@ -92,7 +113,7 @@ export const DailyWinningsChart = (props: Props) => {
             </g>
           ))}
           <line x1={plotLeft} x2={plotRight} y1={yForValue(0)} y2={yForValue(0)} stroke="#81868d" strokeWidth="1.5" />
-          {chartSeries.map((series) => (
+          {visibleSeries.map((series) => (
             <path
               key={series.key}
               d={buildPath(series.key)}

@@ -17,7 +17,16 @@ const isWinrateHandBatchPointDto = (value: unknown): value is WinrateHandBatchPo
     Number.isFinite(value.withShowdownWinningsBB) &&
     "withoutShowdownWinningsBB" in value &&
     typeof value.withoutShowdownWinningsBB === "number" &&
-    Number.isFinite(value.withoutShowdownWinningsBB)
+    Number.isFinite(value.withoutShowdownWinningsBB) &&
+    "netWinningsBBMovingAverage" in value &&
+    typeof value.netWinningsBBMovingAverage === "number" &&
+    Number.isFinite(value.netWinningsBBMovingAverage) &&
+    "withShowdownWinningsBBMovingAverage" in value &&
+    typeof value.withShowdownWinningsBBMovingAverage === "number" &&
+    Number.isFinite(value.withShowdownWinningsBBMovingAverage) &&
+    "withoutShowdownWinningsBBMovingAverage" in value &&
+    typeof value.withoutShowdownWinningsBBMovingAverage === "number" &&
+    Number.isFinite(value.withoutShowdownWinningsBBMovingAverage)
   );
 };
 

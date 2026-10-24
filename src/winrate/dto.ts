@@ -7,4 +7,7 @@ export interface WinrateHandBatchPointDto {
   netWinningsBB: number;
   withShowdownWinningsBB: number;
   withoutShowdownWinningsBB: number;
+  netWinningsBBMovingAverage: number;
+  withShowdownWinningsBBMovingAverage: number;
+  withoutShowdownWinningsBBMovingAverage: number;
 }
