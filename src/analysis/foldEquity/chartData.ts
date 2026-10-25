@@ -24,6 +24,6 @@ export const getFoldEquityChartData = (
         bucket === undefined || bucket.opportunityCount === 0
           ? null
           : (100 * bucket.villainFoldCount) / bucket.opportunityCount,
-      breakevenPercent: (100 * betToPot) / (2 * betToPot + 1),
+      breakevenPercent: betToPot / (betToPot + 1),
     };
   });
