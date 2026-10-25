@@ -18,36 +18,36 @@ const chartColors = {
 };
 
 const chartSeries = [
-  { key: "netWinningsBB", label: "Net winnings", color: chartColors.net, visible: false },
+  { key: "netWinningsBB", label: "Net winnings", color: chartColors.net, visible: true },
   {
     key: "withShowdownWinningsBB",
     label: "With showdown",
     color: chartColors.showdown,
-    visible: false,
+    visible: true,
   },
   {
     key: "withoutShowdownWinningsBB",
     label: "Without showdown",
     color: chartColors.nonShowdown,
-    visible: false,
+    visible: true,
   },
   {
     key: "netWinningsBBMovingAverage",
     label: "Net winnings (10-point moving average)",
     color: chartColors.net,
-    visible: true,
+    visible: false,
   },
   {
     key: "withShowdownWinningsBBMovingAverage",
     label: "With showdown (10-point moving average)",
     color: chartColors.showdown,
-    visible: true,
+    visible: false,
   },
   {
     key: "withoutShowdownWinningsBBMovingAverage",
     label: "Without showdown (10-point moving average)",
     color: chartColors.nonShowdown,
-    visible: true,
+    visible: false,
   },
 ] as const;
 
