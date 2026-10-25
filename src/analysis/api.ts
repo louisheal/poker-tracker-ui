@@ -1,5 +1,8 @@
 import type {
   PostflopActionSequence,
+  PostflopActionFrequencyDto,
+  PostflopActionType,
+  PostflopActionActorRole,
   PostflopFlopHighCard,
   PostflopFlopRankTexture,
   PostflopFlopTexture,
@@ -28,6 +31,8 @@ export interface PostflopBetResponseBucketFilters {
   riverBetSizeCategory: RiverBetSizeCategory | null;
 }
 
+export type PostflopActionFrequencyFilters = Omit<PostflopBetResponseBucketFilters, "riverBetSizeCategory">;
+
 const isFiniteNumber = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value);
 
 const isPostflopBetResponseBucketDto = (value: unknown): value is PostflopBetResponseBucketDto => {
@@ -35,7 +40,7 @@ const isPostflopBetResponseBucketDto = (value: unknown): value is PostflopBetRes
 
   return (
     "line" in value &&
-    (value.line === "BF" || value.line === "XBF") &&
+    (value.line === "BF" || value.line === "XBF" || value.line === "BRF" || value.line === "XBRF") &&
     "betSizeThresholdPercent" in value &&
     isFiniteNumber(value.betSizeThresholdPercent) &&
     Number.isInteger(value.betSizeThresholdPercent) &&
@@ -54,6 +59,37 @@ const isPostflopBetResponseBucketDto = (value: unknown): value is PostflopBetRes
   );
 };
 
+const isPostflopActionType = (value: unknown): value is PostflopActionType =>
+  value === "Check" || value === "Bet" || value === "Raise" || value === "Call" || value === "Fold";
+
+const isPostflopActionActorRole = (value: unknown): value is PostflopActionActorRole =>
+  value === "Pfr" || value === "Defender";
+
+const isPostflopActionFrequencyDto = (value: unknown): value is PostflopActionFrequencyDto => {
+  if (typeof value !== "object" || value === null) return false;
+
+  return (
+    "line" in value &&
+    typeof value.line === "string" &&
+    /^[XBRFC]+$/.test(value.line) &&
+    "decisionContext" in value &&
+    typeof value.decisionContext === "string" &&
+    "actorRole" in value &&
+    isPostflopActionActorRole(value.actorRole) &&
+    "action" in value &&
+    isPostflopActionType(value.action) &&
+    "actionCount" in value &&
+    isFiniteNumber(value.actionCount) &&
+    Number.isInteger(value.actionCount) &&
+    value.actionCount >= 0 &&
+    "opportunityCount" in value &&
+    isFiniteNumber(value.opportunityCount) &&
+    Number.isInteger(value.opportunityCount) &&
+    value.opportunityCount > 0 &&
+    value.actionCount <= value.opportunityCount
+  );
+};
+
 const appendValues = <T extends string>(query: URLSearchParams, key: string, values: readonly T[]) => {
   for (const value of values) {
     query.append(key, value);
@@ -63,6 +99,7 @@ const appendValues = <T extends string>(query: URLSearchParams, key: string, val
 const buildPostflopBetResponseBucketQuery = (
   street: PostflopBetResponseStreet,
   filters: PostflopBetResponseBucketFilters,
+  includeRiverBetSizeCategory = true,
 ) => {
   const query = new URLSearchParams();
   if (filters.pfrInPosition !== null) {
@@ -90,7 +127,7 @@ const buildPostflopBetResponseBucketQuery = (
   if (street === "River") {
     appendValues(query, "turnActionSequences", filters.turnActionSequences);
     appendValues(query, "riverRunouts", filters.riverRunouts);
-    if (filters.riverBetSizeCategory !== null) {
+    if (includeRiverBetSizeCategory && filters.riverBetSizeCategory !== null) {
       query.set("riverBetSizeCategory", filters.riverBetSizeCategory);
     }
   }
@@ -129,4 +166,36 @@ export const getPostflopBetResponseBuckets = async (
   }
 
   return payload.buckets;
+};
+
+export const getPostflopActionFrequencies = async (
+  street: PostflopBetResponseStreet,
+  filters: PostflopActionFrequencyFilters,
+  signal?: AbortSignal,
+): Promise<PostflopActionFrequencyDto[]> => {
+  const query = buildPostflopBetResponseBucketQuery(
+    street,
+    { ...filters, riverBetSizeCategory: null },
+    false,
+  );
+  const response = await fetch(
+    getPostflopBettingUrl(`postflop-betting/${street.toLowerCase()}/action-frequencies`, query),
+    { signal },
+  );
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}`);
+  }
+
+  const payload: unknown = await response.json();
+  if (
+    typeof payload !== "object" ||
+    payload === null ||
+    !("frequencies" in payload) ||
+    !Array.isArray(payload.frequencies) ||
+    !payload.frequencies.every(isPostflopActionFrequencyDto)
+  ) {
+    throw new Error(`Invalid ${street.toLowerCase()} action frequencies response.`);
+  }
+
+  return payload.frequencies;
 };

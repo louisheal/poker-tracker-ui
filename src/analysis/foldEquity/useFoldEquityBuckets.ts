@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
-import { getPostflopBetResponseBuckets } from "./api";
-import type { PostflopBetResponseBucketFilters } from "./api";
-import type { PostflopBetResponseBucketDto, PostflopBetResponseStreet } from "./dto";
+import { getPostflopBetResponseBuckets } from "../api";
+import type { PostflopBetResponseBucketFilters } from "../api";
+import type { PostflopBetResponseBucketDto, PostflopBetResponseStreet } from "../dto";
 
 type LoadedState = { status: "loaded"; buckets: PostflopBetResponseBucketDto[] };
 type RequestState = { status: "loading" } | { status: "error"; message: string };
 
-export type PostflopBetResponseBucketsState = { status: "idle" } | RequestState | LoadedState;
+export type FoldEquityBucketsState = { status: "idle" } | RequestState | LoadedState;
 
 type StoredState = {
   street: PostflopBetResponseStreet;
   state: RequestState | LoadedState;
 };
 
-export const usePostflopBetResponseBuckets = (
+export const useFoldEquityBuckets = (
   street: PostflopBetResponseStreet | null,
   filters: PostflopBetResponseBucketFilters,
-): PostflopBetResponseBucketsState => {
+): FoldEquityBucketsState => {
   const {
     pfrInPosition,
     ipPosition,

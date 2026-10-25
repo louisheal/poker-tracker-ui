@@ -70,8 +70,23 @@ export interface RiverBettingStatDto {
 }
 
 export interface PostflopBetResponseBucketDto {
-  line: "BF" | "XBF";
+  line: "BF" | "XBF" | "BRF" | "XBRF";
   betSizeThresholdPercent: number;
   opportunityCount: number;
   villainFoldCount: number;
+}
+
+export type PostflopActionFrequencyLine = "B" | "XB" | "BR" | "XBR";
+
+export type PostflopActionActorRole = "Pfr" | "Defender";
+
+export type PostflopActionType = "Check" | "Bet" | "Raise" | "Call" | "Fold";
+
+export interface PostflopActionFrequencyDto {
+  line: string;
+  decisionContext: string;
+  actorRole: PostflopActionActorRole;
+  action: PostflopActionType;
+  actionCount: number;
+  opportunityCount: number;
 }

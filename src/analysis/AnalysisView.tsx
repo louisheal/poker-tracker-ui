@@ -3,11 +3,13 @@ import type { SxProps, Theme } from "@mui/material/styles";
 import { useState } from "react";
 import { Header } from "../Header";
 import { AnalysisContextFilters } from "./AnalysisContextFilters";
-import { PostflopBetResponseSection } from "./PostflopBetResponseSection";
 import { PostflopBettingFilters } from "./PostflopBettingFilters";
+import { FoldEquitySection } from "./foldEquity/FoldEquitySection";
+import { useFoldEquityBuckets } from "./foldEquity/useFoldEquityBuckets";
+import { StabAggressionSection } from "./stabAggression/StabAggressionSection";
 import type { PostflopAnalysisTab } from "./dto";
 import { usePostflopBettingFilters } from "./usePostflopBettingFilters";
-import { usePostflopBetResponseBuckets } from "./usePostflopBetResponseBuckets";
+import { usePostflopActionFrequencies } from "./stabAggression/usePostflopActionFrequencies";
 
 const analysisViewSx = {
   minHeight: "100vh",
@@ -35,7 +37,7 @@ const tabsSx = {
 export const AnalysisView = () => {
   const [activeTab, setActiveTab] = useState<PostflopAnalysisTab>("Flop");
   const filters = usePostflopBettingFilters();
-  const betResponseBucketsState = usePostflopBetResponseBuckets(activeTab, {
+  const sharedFilters = {
     pfrInPosition: filters.pfrInPosition,
     ipPosition: filters.ipPosition,
     oopPosition: filters.oopPosition,
@@ -47,8 +49,12 @@ export const AnalysisView = () => {
     turnActionSequences: filters.turnActionSequences,
     turnRunouts: filters.turnRunouts,
     riverRunouts: filters.riverRunouts,
+  };
+  const betResponseBucketsState = useFoldEquityBuckets(activeTab, {
+    ...sharedFilters,
     riverBetSizeCategory: filters.riverBetSizeCategory,
   });
+  const actionFrequenciesState = usePostflopActionFrequencies(activeTab, sharedFilters);
 
   const selectTab = (_event: React.SyntheticEvent, value: PostflopAnalysisTab) => setActiveTab(value);
 
@@ -101,7 +107,8 @@ export const AnalysisView = () => {
           hidden={activeTab !== "Flop"}
           sx={{ display: activeTab === "Flop" ? "flex" : "none", flexDirection: "column", gap: 2 }}
         >
-          <PostflopBetResponseSection street="Flop" state={betResponseBucketsState} />
+          <FoldEquitySection street="Flop" state={betResponseBucketsState} />
+          <StabAggressionSection street="Flop" state={actionFrequenciesState} />
         </Box>
         <Box
           component="section"
@@ -111,7 +118,8 @@ export const AnalysisView = () => {
           hidden={activeTab !== "Turn"}
           sx={{ display: activeTab === "Turn" ? "flex" : "none", flexDirection: "column", gap: 2 }}
         >
-          <PostflopBetResponseSection street="Turn" state={betResponseBucketsState} />
+          <FoldEquitySection street="Turn" state={betResponseBucketsState} />
+          <StabAggressionSection street="Turn" state={actionFrequenciesState} />
         </Box>
         <Box
           component="section"
@@ -121,7 +129,8 @@ export const AnalysisView = () => {
           hidden={activeTab !== "River"}
           sx={{ display: activeTab === "River" ? "flex" : "none", flexDirection: "column", gap: 2 }}
         >
-          <PostflopBetResponseSection street="River" state={betResponseBucketsState} />
+          <FoldEquitySection street="River" state={betResponseBucketsState} />
+          <StabAggressionSection street="River" state={actionFrequenciesState} />
         </Box>
       </Box>
     </Box>

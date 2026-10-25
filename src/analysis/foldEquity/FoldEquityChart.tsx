@@ -1,8 +1,8 @@
 import { Box, Paper, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 import type { SxProps, Theme } from "@mui/material/styles";
-import type { PostflopBetResponseBucketDto, PostflopBetResponseStreet } from "./dto";
-import { getPostflopBetResponseChartData } from "./riverBetResponseChartData";
+import type { PostflopBetResponseBucketDto, PostflopBetResponseStreet } from "../dto";
+import { getFoldEquityChartData } from "./chartData";
 
 const chartFrameSx = {
   minWidth: 0,
@@ -25,7 +25,14 @@ interface Props {
   street: PostflopBetResponseStreet;
 }
 
-export const RiverBetResponseChart = (props: Props) => {
+const lineLabels: Record<PostflopBetResponseBucketDto["line"], string> = {
+  BF: "BF (Bet-Fold)",
+  XBF: "XBF (Check-Bet-Fold)",
+  BRF: "BRF (Bet-Raise-Fold)",
+  XBRF: "XBRF (Check-Bet-Raise-Fold)",
+};
+
+export const FoldEquityChart = (props: Props) => {
   const isWideChart = useMediaQuery((theme: Theme) => theme.breakpoints.up("md"));
   const [selectedOpportunity, setSelectedOpportunity] = useState<number | null>(null);
   const width = isWideChart ? 760 : 360;
@@ -34,14 +41,14 @@ export const RiverBetResponseChart = (props: Props) => {
   const plotRight = width - (isWideChart ? 68 : 64);
   const plotTop = 28;
   const plotBottom = isWideChart ? 330 : 390;
-  const chartData = getPostflopBetResponseChartData(props.buckets, props.line);
+  const chartData = getFoldEquityChartData(props.buckets, props.line);
   const volumeBarWidth = Math.min(
     (isWideChart ? 12 : 6) + 2,
     (plotRight - plotLeft) / Math.max(1, chartData.length - 1),
   );
   const volumeMaximum = Math.max(1, ...chartData.map((point) => point.opportunityCount));
   const volumeTickCount = Math.min(4, volumeMaximum);
-  const chartId = `${props.street.toLowerCase()}-bet-response-${props.line.toLowerCase()}`;
+  const chartId = `${props.street.toLowerCase()}-fold-equity-${props.line.toLowerCase()}`;
   const titleId = `${chartId}-chart-title`;
   const descriptionId = `${chartId}-chart-description`;
   const xForIndex = (index: number) => plotLeft + (index / (chartData.length - 1)) * (plotRight - plotLeft);
@@ -64,7 +71,7 @@ export const RiverBetResponseChart = (props: Props) => {
   return (
     <Paper component="section" variant="outlined" sx={chartFrameSx}>
       <Typography component="h4" variant="subtitle1" sx={{ fontWeight: 600 }}>
-        {props.line === "BF" ? "BF (Bet-Fold)" : "XBF (Check-Bet-Fold)"}
+        {lineLabels[props.line]}
       </Typography>
       <Box sx={{ width: "100%", minWidth: 0 }}>
         <svg
@@ -75,10 +82,10 @@ export const RiverBetResponseChart = (props: Props) => {
           style={{ display: "block", width: "100%", height: "auto" }}
         >
           <title id={titleId}>
-            {props.street} {props.line} fold rate and breakeven by bet size
+            {props.street} {props.line} fold rate and breakeven by bet or raise size
           </title>
           <desc id={descriptionId}>
-            The x-axis shows cumulative bet-to-pot thresholds from 10% to 300% in 10% steps. The left y-axis shows
+            The x-axis shows cumulative aggressor-size-to-pot thresholds from 10% to 300% in 10% steps. The left y-axis shows
             population fold rate; gaps indicate thresholds with no opportunities. The dashed amber line shows
             theoretical breakeven fold rate. Neutral bars behind the lines show cumulative population response
             opportunities on the independent right y-axis scale for this chart.
@@ -226,7 +233,7 @@ export const RiverBetResponseChart = (props: Props) => {
             fill={chartPalette.labels}
             fontSize="12"
           >
-            Bet size to pot (%)
+            Bet or raise size to pot (%)
           </text>
         </svg>
       </Box>
@@ -247,7 +254,7 @@ export const RiverBetResponseChart = (props: Props) => {
       >
         <thead>
           <tr>
-            <th scope="col">Bet size threshold</th>
+            <th scope="col">Bet or raise size threshold</th>
             <th scope="col">Cumulative opportunities</th>
           </tr>
         </thead>

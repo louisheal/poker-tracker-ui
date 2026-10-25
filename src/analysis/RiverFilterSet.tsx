@@ -1,4 +1,14 @@
-import { Box, Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select, Typography } from "@mui/material";
+import {
+  Box,
+  Checkbox,
+  FormControl,
+  FormHelperText,
+  InputLabel,
+  ListItemText,
+  MenuItem,
+  Select,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
 import type { PostflopRunout, RiverBetSizeCategory } from "./dto";
 
@@ -80,6 +90,7 @@ export const RiverFilterSet = (props: Props) => (
             </MenuItem>
           ))}
         </Select>
+        <FormHelperText>Applies to Fold Equity only</FormHelperText>
       </FormControl>
     </Box>
   </Box>

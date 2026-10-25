@@ -1,16 +1,16 @@
-import type { PostflopBetResponseBucketDto } from "./dto";
+import type { PostflopBetResponseBucketDto } from "../dto";
 
-export interface PostflopBetResponseChartPoint {
+export interface FoldEquityChartPoint {
   betSizeThresholdPercent: number;
   opportunityCount: number;
   foldRatePercent: number | null;
   breakevenPercent: number;
 }
 
-export const getPostflopBetResponseChartData = (
+export const getFoldEquityChartData = (
   buckets: PostflopBetResponseBucketDto[],
   line: PostflopBetResponseBucketDto["line"],
-): PostflopBetResponseChartPoint[] =>
+): FoldEquityChartPoint[] =>
   Array.from({ length: 30 }, (_, thresholdIndex) => (thresholdIndex + 1) * 10).map((thresholdPercent) => {
     const bucket = buckets.find(
       (candidate) => candidate.line === line && candidate.betSizeThresholdPercent === thresholdPercent,
