@@ -33,6 +33,9 @@ const isHandHistoryDto = (value: unknown): value is HandHistoryDto =>
   typeof value.handId === "string" &&
   "holeCards" in value &&
   isHoleCardsDto(value.holeCards) &&
+  "netWinningsBB" in value &&
+  typeof value.netWinningsBB === "number" &&
+  Number.isFinite(value.netWinningsBB) &&
   "labels" in value &&
   Array.isArray(value.labels) &&
   value.labels.every(isHandLabelAssignment) &&

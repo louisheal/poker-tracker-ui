@@ -1,5 +1,16 @@
-import { Box, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableSortLabel,
+  Typography,
+} from "@mui/material";
 import type { SxProps, Theme } from "@mui/material/styles";
+import { useState } from "react";
 import type { HandLabelOption } from "../api";
 import { HandHistoryRow } from "./HandHistoryRow";
 import type { HandHistory } from "./types";
@@ -33,8 +44,9 @@ const handHistoryTableContentSx = ((theme: Theme) => ({
   },
   "& .MuiTableCell-root:nth-of-type(1)": { width: "18%" },
   "& .MuiTableCell-root:nth-of-type(2)": { width: "14%" },
-  "& .MuiTableCell-root:nth-of-type(3)": { width: "63%" },
-  "& .MuiTableCell-root:nth-of-type(4)": { width: "5%" },
+  "& .MuiTableCell-root:nth-of-type(3)": { width: "12%" },
+  "& .MuiTableCell-root:nth-of-type(4)": { width: "51%" },
+  "& .MuiTableCell-root:nth-of-type(5)": { width: "5%" },
   "& .MuiAutocomplete-root": { width: "100%", minWidth: 0 },
   "& .MuiAutocomplete-inputRoot": {
     minWidth: 0,
@@ -101,6 +113,16 @@ interface Props {
 }
 
 export const HandHistoryTable = (props: Props) => {
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc" | null>(null);
+  const displayedHands =
+    sortDirection === null
+      ? props.hands
+      : [...props.hands].sort((left, right) =>
+          sortDirection === "asc"
+            ? left.netWinningsBB - right.netWinningsBB
+            : right.netWinningsBB - left.netWinningsBB,
+        );
+
   return (
     <Paper component="section" aria-label="Hand histories" elevation={0} sx={handHistoryTableSx}>
       {props.hands.length === 0 ? (
@@ -117,12 +139,24 @@ export const HandHistoryTable = (props: Props) => {
             <TableRow>
               <TableCell>Hand ID</TableCell>
               <TableCell>Hole Cards</TableCell>
+              <TableCell sortDirection={sortDirection ?? false}>
+                <TableSortLabel
+                  active={sortDirection !== null}
+                  direction={sortDirection ?? "asc"}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setSortDirection((current) => (current === "asc" ? "desc" : "asc"));
+                  }}
+                >
+                  Result
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Labels</TableCell>
               <TableCell>Flag</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {props.hands.map((hand) => (
+            {displayedHands.map((hand) => (
               <HandHistoryRow
                 key={hand.handId}
                 hand={hand}

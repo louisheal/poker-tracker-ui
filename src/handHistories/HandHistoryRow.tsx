@@ -38,6 +38,9 @@ export const HandHistoryRow = (props: Props) => {
         {props.hand.holeCards.first.suit} {props.hand.holeCards.second.rank}
         {props.hand.holeCards.second.suit}
       </TableCell>
+      <TableCell data-label="Result">
+        {`${props.hand.netWinningsBB >= 0 ? "+" : ""}${props.hand.netWinningsBB.toFixed(2)} BB`}
+      </TableCell>
       <TableCell data-label="Labels">
         <HandLabelsCell labels={props.hand.labels} labelOptions={props.labelOptions} />
       </TableCell>

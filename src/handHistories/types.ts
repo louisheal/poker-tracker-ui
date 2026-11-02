@@ -3,6 +3,7 @@ import type { HandLabelAssignment, HandLabelOption } from "../api";
 export interface HandHistory {
   handId: string;
   holeCards: HoleCards;
+  netWinningsBB: number;
   labels: HandLabelAssignment[];
   note: string;
   flagged: boolean;

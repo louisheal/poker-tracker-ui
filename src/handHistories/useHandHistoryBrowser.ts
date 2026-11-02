@@ -16,6 +16,7 @@ const unlabelledFilterValue = "__unlabelled__";
 
 const mapHandHistory = (hand: HandHistoryDto): HandHistory => ({
   handId: hand.handId,
+  netWinningsBB: hand.netWinningsBB,
   labels: hand.labels,
   note: hand.note,
   flagged: hand.flagged,

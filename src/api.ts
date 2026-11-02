@@ -3,6 +3,7 @@ import type { RangeActions } from "./model";
 export interface HandHistoryDto {
   handId: string;
   holeCards: HoleCardsDto;
+  netWinningsBB: number;
   labels: HandLabelAssignment[];
   note: string;
   flagged: boolean;
